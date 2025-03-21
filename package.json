@@ -1,0 +1,97 @@
+{
+    "name": "cclplugin",
+    "version": "0.0.0",
+    "package_version": 2,
+    "type": "module",
+    "main": "./dist/browser.cjs",
+    "scripts": {
+        "dev": "npm run build -- --mode development",
+        "build": "vite build"
+    },
+    "dependencies": {
+        "@dagrejs/dagre": "1.1.4",
+        "@vue-flow/background": "^1.3.2",
+        "@vue-flow/core": "1.42.1",
+        "element-plus": "^2.8.6",
+        "ts-node": "^10.9.1",
+        "tslib": "^2.8.1",
+        "typescript": "^5.5.3",
+        "vue": "^3.4.37"
+    },
+    "devDependencies": {
+        "@cocos-fe/vite-plugin-cocos-panel": "^0.0.1-beta.5",
+        "@cocos/creator-types": "^3.8.4",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "cocos_types": "https://github.com/BangJinM/cocos_types.git",
+        "fs-extra": "^10.0.0",
+        "rollup-plugin-node-externals": "^7.1.3",
+        "unplugin-auto-import": "^0.18.6",
+        "unplugin-vue-components": "^0.27.5",
+        "vite": "^5.4.1",
+        "vue-tsc": "^2.1.10"
+    },
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:menu.panel",
+                "label": "i18n:cclplugin.title",
+                "message": "open-panel-without-uuid"
+            }
+        ],
+        "messages": {
+            "open": {
+                "public": true,
+                "description": "打开行为树面板",
+                "methods": [
+                    "openBtGraphPanelWithUUID"
+                ]
+            },
+            "open-panel-without-uuid": {
+                "public": true,
+                "description": "打开行为树面板",
+                "methods": [
+                    "openBtGraphPanel"
+                ]
+            },
+            "init-asset-uuid": {
+                "public": true,
+                "description": "打开行为树面板",
+                "methods": [
+                    "bt-graph.openAssetUUID"
+                ]
+            }
+        },
+        "scene": {
+            "script": "./dist/scene.cjs"
+        },
+        "asset-db": {
+            "script": "./dist/importer.cjs",
+            "asset-handler": [
+                {
+                    "handler": "registerShaderGraphImporter",
+                    "name": "bt-graph",
+                    "extnames": [
+                        ".btgraph"
+                    ]
+                }
+            ],
+            "mount": {
+                "path": "./src/runtime",
+                "readonly": true
+            }
+        }
+    },
+    "panels": {
+        "bt-graph": {
+            "title": "bt-graph",
+            "main": "./dist/panel.cjs",
+            "type": "dockable",
+            "size": {
+                "min-width": 400,
+                "min-height": 300,
+                "width": 800,
+                "height": 700
+            }
+        }
+    }
+}

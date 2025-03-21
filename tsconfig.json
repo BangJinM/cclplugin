@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schemastore.azurewebsites.net/schemas/json/tsconfig.json",
+    "compilerOptions": {
+        "target": "ES2021",
+        "module": "ES6",
+        "moduleResolution": "node",
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "esModuleInterop": true,
+        "strictNullChecks": false,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "types": [
+            "node",
+            "@cocos/creator-types/editor",
+            "@cocos/creator-types/engine",
+        ]
+    },
+}

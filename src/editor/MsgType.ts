@@ -1,0 +1,20 @@
+export enum MsgType {
+
+    // 资源相关
+    /** 打开资源框 */
+    OpenGraphSource = "open-graph-Source",
+    /** 打开 */
+    AddGraphAsset = "add-graph-asset",
+    CreateNewGraphAsset = "create-new-graph-asset",
+    SaveGraphAsset = "save-graph-asset",
+    SaveGraphAssetAs = "save-graph-asset-as",
+
+    // 行为树界面
+    /** 重新加载行为树界面 */
+    InitBTPanel = "init-bt-panel",
+    AddNode = "add-node",
+    SelectNode = "select-node",
+    CreateNode = "create-node",
+}
+
+
