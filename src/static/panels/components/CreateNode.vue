@@ -10,9 +10,30 @@ let createNode = ref();
 let visibleFlag = ref(false);
 
 function onClose() {
-  messageMgr.send(MsgType.CreateNode, false);
+  messageMgr.send(MsgType.CreateNodePanel, false);
 }
-function onSearchInputChange(value: string) {}
+function onSearchInputChange(value: string) {
+  if (searchValue.value === value) return;
+  searchValue.value = value;
+
+  setTimeout(() => {
+    // let selectItem;
+    // let treeData = convertMenuData(Menu.Instance.getShaderNodeMenu(), false);
+    // if (value) {
+    //   const result = filterMenuByKeyword(treeData, value);
+    //   treeData = result.filterTree;
+    //   selectItem = result.firstSelect;
+    // }
+    // const $dom = menuRef.value;
+    // $dom.tree = treeData;
+    // if (treeData.length > 0) {
+    //   $dom.clear();
+    //   $dom.select(selectItem);
+    //   menuRef.value.positioning(selectItem);
+    //   $dom.render();
+    // }
+  }, 50);
+}
 
 let onDragStartHeaderEvent = null;
 function onMouseDown(event: MouseEvent) {
@@ -49,143 +70,79 @@ function onMouseDown(event: MouseEvent) {
   event.target.addEventListener("mousedown", onDragStartHeaderEvent, false);
 }
 
+interface TreeDetail {
+  kType?: string;
+  kClass?: string;
+  value: string;
+}
+
+interface TreeNode {
+  detail: TreeDetail;
+  children: TreeNode[];
+  showArrow: boolean;
+}
+
 onMounted(async () => {
-  messageMgr.register(MsgType.CreateNode, (flag) => {
+  messageMgr.register(MsgType.CreateNodePanel, (flag, fatherNodeId) => {
     visibleFlag.value = flag;
 
     if (!flag) return;
-    const vm = this;
 
-    var t = {
-      detail: {
-        value: "test",
-        checked: false,
-      },
-      children: [
-        {
-          detail: {
-            value: "test-2",
-            checked: false,
-          },
-          children: [
-            {
-              detail: {
-                value: "test-3",
-                checked: false,
-              },
-              showArrow: false,
-              children: [],
-            },
-          ],
-        },
-      ],
-    };
+    nextTick(async () => {
+      let btClass = await messageMgr.callSceneMethod("queryBTTreeClassMap");
 
-    var test = [];
-
-    for (let i = 0; i < 1000; i++) {
-      test.push(JSON.parse(JSON.stringify(t)));
-    }
-
-    nextTick(() => {
-      menuRef.value.setTemplate("left", "<ui-checkbox></ui-checkbox>");
-      menuRef.value.setTemplateInit("left", ($left) => {
-        $left.$checkbox = $left.querySelector("ui-checkbox");
-        $left.$checkbox.addEventListener("confirm", (event) => {
-          $left.data.detail.checkbox = !$left.data.detail.checkbox;
-          menuRef.value.render(true);
+      let resultMap: Map<string, TreeNode> = new Map();
+      btClass.map((value) => {
+        if (!resultMap.has(value.type)) {
+          resultMap.set(value.type, {
+            detail: { kType: value.type, value: value.type },
+            children: [],
+            showArrow: true,
+          });
+        }
+        resultMap.get(value.type).children.push({
+          detail: { kType: value.type, kClass: value.name, value: value.name },
+          children: [],
+          showArrow: false,
         });
       });
-      menuRef.value.setRender("left", ($left, data) => {
-        $left.$checkbox.value = data.detail.checkbox;
+
+      let resultStr = [];
+      resultMap.forEach((element) => {
+        resultStr.push(JSON.parse(JSON.stringify(element)));
       });
 
-      menuRef.value.setTemplate(
-        "text",
-        `<span class="name"></span><span class="link"></span>`
-      );
+      menuRef.value.setTemplate("text", `<span class="name"></span>`);
       menuRef.value.setTemplateInit("text", ($text) => {
         $text.$name = $text.querySelector(".name");
-        $text.$link = $text.querySelector(".link");
       });
       menuRef.value.setRender("text", ($text, data) => {
         $text.$name.innerHTML = data.detail.value;
-        $text.$link.innerHTML = `link(${data.index})`;
       });
-
-      menuRef.value.setTemplate("right", '<ui-icon value="reset"></ui-icon>');
-      menuRef.value.setTemplateInit("right", ($right) => {
-        $right.$refresh = $right.querySelector("ui-icon");
-        $right.$refresh.addEventListener("click", (event) => {
-          console.log($right.data);
-        });
-      });
-
-      menuRef.value.tree = test;
-
-      menuRef.value.addEventListener("keydown", (event) => {
-        const $dom = menuRef.value;
-        if (event.code === "ArrowUp") {
-          const item = $dom.selectItems[$dom.selectItems.length - 1];
-          const index = Math.max(item.index - 1, 0);
-          if (event.shiftKey) {
-            $dom.select($dom.list[index]);
-          } else {
-            $dom.clear();
-            $dom.select($dom.list[index]);
-          }
-          $dom.render();
-        } else if (event.code === "ArrowDown") {
-          const item = $dom.selectItems[$dom.selectItems.length - 1];
-          const index = Math.min(item.index + 1, $dom.list.length - 1);
-          if (event.shiftKey) {
-            $dom.select($dom.list[index]);
-          } else {
-            $dom.clear();
-            $dom.select($dom.list[index]);
-          }
-          $dom.render();
-        }
-      });
-
-      menuRef.value.setTemplateInit("item", ($div) => {
-        const $dom = menuRef.value;
-        $div.addEventListener("click", (event) => {
-          if (event.ctrlKey || event.metaKey) {
-            $dom.select($div.data);
-          } else {
-            $dom.clear();
-            $dom.select($div.data);
-          }
-          $dom.render();
-        });
-      });
-      menuRef.value.setRender("item", ($div, data) => {
-        if (data.detail.disabled) {
-          $div.setAttribute("disabled", "");
-        } else {
-          $div.removeAttribute("disabled");
-        }
-      });
-
+      menuRef.value.tree = resultStr;
       menuRef.value.setItemRender;
 
-      menuRef.value.css = `
-.item[disabled] {
-  opacity: 0.4;
-}
+      menuRef.value.setTemplateInit(
+        "item",
+        ($div: HTMLElement & { data: { detail: TreeDetail } }) => {
+          $div.addEventListener("click", (event: MouseEvent) => {
+            menuRef.value.clear();
+            menuRef.value.select($div.data);
+            menuRef.value.render();
 
-.text > .linsk {
-  margin-left: 10px;
-  cursor: pointer;
-  color: yellow;
-}
+            if (!$div.data.detail.kClass) return;
 
-.right > ui-icon {
-  cursor: pointer;
-  color: green;
-}
-  `;
+            messageMgr.send(
+              MsgType.CreateNode,
+              fatherNodeId,
+              $div.data.detail.kType,
+              $div.data.detail.kClass
+            );
+
+            messageMgr.send(MsgType.CreateNodePanel, false);
+          });
+        }
+      );
     });
   });
 });
@@ -228,7 +185,8 @@ onpageshow;
 }
 
 .section {
-  height: 100%;
+  height: 214px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -249,6 +207,7 @@ onpageshow;
 
 .menus {
   height: 100%;
+  width: 100%;
 }
 </style>
 
@@ -268,7 +227,7 @@ onpageshow;
         <ui-icon value="close"></ui-icon>
       </ui-button>
     </header>
-    <section>
+    <section class="section">
       <div class="search-group">
         <ui-icon class="icon" value="search"></ui-icon>
         <ui-input

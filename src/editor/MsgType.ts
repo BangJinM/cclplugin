@@ -12,9 +12,10 @@ export enum MsgType {
     // 行为树界面
     /** 重新加载行为树界面 */
     InitBTPanel = "init-bt-panel",
-    AddNode = "add-node",
-    SelectNode = "select-node",
+    CreateNodePanel = "create-node-panel",
     CreateNode = "create-node",
+    SelectNode = "select-node",
+    DelNode = "del-node",
 }
 
 

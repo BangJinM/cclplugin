@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Background } from "@vue-flow/background";
-import { VueFlow } from "@vue-flow/core";
+import { useVueFlow, VueFlow } from "@vue-flow/core";
 import { ref } from "vue";
 import { messageMgr } from "../../../editor/MessageMgr";
 import { MsgType } from "../../../editor/MsgType";
 import { IBTNodesData } from "../../../runtime";
+
+const { updateNode } = useVueFlow();
 
 const nodes = ref([]);
 const edges = ref([]);
@@ -16,6 +18,10 @@ messageMgr.register(MsgType.InitBTPanel, (node: IBTNodesData, id?: string) => {
       ...element,
       draggable: false, // 禁用节点拖动
       connectable: false, // 禁用连接锚点
+      selected: false,
+      style: {
+        border: "1px solid #9E9E9E",
+      },
     });
   }
 
@@ -42,28 +48,49 @@ function handleNodeClick({ event, node }) {
   messageMgr.send(MsgType.SelectNode, node.id);
 }
 
-function handleNodeRightClick() {
+function handleNodeRightClick({ event, node }) {
   let menu = [
     {
       label: "增加节点",
       visible: true,
-      accelerator: "Space",
+      // accelerator: "Space",
       click: () => {
-        messageMgr.send(MsgType.CreateNode, true);
+        messageMgr.send(MsgType.CreateNodePanel, true, node.id);
       },
     },
     {
       label: "删除节点",
       visible: true,
-      accelerator: "Space",
+      // accelerator: "Space",
       click: () => {
-        console.log("dsadfa");
+        messageMgr.send(MsgType.DelNode, node.id);
       },
     },
   ];
   Editor.Menu.popup({ menu });
 }
 function handlePanelRightClick() {}
+
+function handleNodeMouseEnter({ event, node }) {
+  let newNode = {
+    ...node,
+    selected: true,
+    style: {
+      border: "4px solid #FF5722",
+    },
+  };
+  updateNode(node.id, newNode);
+}
+function handleNodeMouseLeave({ event, node }) {
+  let newNode = {
+    ...node,
+    selected: true,
+    style: {
+      border: "1px solid #9E9E9E",
+    },
+  };
+  updateNode(node.id, newNode);
+}
 </script>
 
 <style>
@@ -82,6 +109,8 @@ function handlePanelRightClick() {}
       :min-zoom="0.2"
       :max-zoom="4"
       @node-click="handleNodeClick"
+      @node-mouse-enter="handleNodeMouseEnter"
+      @node-mouse-leave="handleNodeMouseLeave"
       @node-context-menu="handleNodeRightClick"
       @pane-context-menu="handlePanelRightClick"
     >

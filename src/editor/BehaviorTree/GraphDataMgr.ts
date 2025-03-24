@@ -14,8 +14,6 @@ export class GraphDataMgr {
     public assetInfo: AssetInfo | null = null;
     btTree: IBTNodesData = { nodes: [], edges: [], blackBoard: new Blackboard() }
 
-    selectNodeId: string;
-
     static instance = null
     static getInstance(): GraphDataMgr {
         if (GraphDataMgr.instance)
@@ -52,8 +50,8 @@ export class GraphDataMgr {
             graphAssetMgr.save(this.assetInfo, JSON.stringify(this.btTree))
         })
 
-        messageMgr.register(MsgType.AddNode, this.OnAddNode.bind(this))
-        messageMgr.register(MsgType.SelectNode, this.OnSelectNode.bind(this))
+        messageMgr.register(MsgType.CreateNode, this.CreateNode.bind(this))
+        messageMgr.register(MsgType.DelNode, this.DelNode.bind(this))
     }
 
     initPanel(assetInfo, data) {
@@ -62,8 +60,7 @@ export class GraphDataMgr {
         this.assetUuid = assetInfo.uuid
 
         this.btTree = JSON.parse(data)
-        this.selectNodeId = this.btTree.nodes[0]?.id
-        messageMgr.send(MsgType.InitBTPanel, this.btTree, this.selectNodeId)
+        messageMgr.send(MsgType.InitBTPanel, this.btTree)
     }
 
     createDefaultData() {
@@ -83,7 +80,11 @@ export class GraphDataMgr {
         return content
     }
 
-    OnAddNode(type: BTType, className: string) {
+    CreateNode(fatherId: string, type: BTType, className?: string) {
+
+        let findIndex = this.btTree.nodes.findIndex(value => value.id === fatherId)
+        if (findIndex < 0) return
+
         let node = {
             id: Editor.Utils.UUID.generate(),
             type: "default",
@@ -93,17 +94,12 @@ export class GraphDataMgr {
             className: className
         }
 
-        if (this.btTree.nodes.length <= 0) {
-            node.type = "input"
-            node.data = { label: "ROOT" }
-        } else {
-            node.type = (type != BTType.Action && type != BTType.Condition) ? "default" : "output"
-            node.data = { label: className }
-        }
+        node.type = (type != BTType.Action && type != BTType.Condition) ? "default" : "output"
+        node.data = { label: className }
 
         let edge = {
             id: Editor.Utils.UUID.generate(),
-            source: this.selectNodeId,
+            source: fatherId,
             target: node.id,
         }
 
@@ -114,7 +110,28 @@ export class GraphDataMgr {
         messageMgr.send(MsgType.InitBTPanel, this.btTree)
     }
 
-    OnSelectNode(id: string) {
-        this.selectNodeId = id
+    DelNode(id) {
+        for (const element of this.btTree.edges) {
+            if (element.source == id) {
+                this.DelNode(element.target)
+            }
+        }
+        for (const element of this.btTree.edges) {
+            if (element.target == id) {
+                let nodeIndex = this.btTree.edges.findIndex(value => value.id === element.id)
+                if (nodeIndex >= 0) {
+                    this.btTree.edges.splice(nodeIndex, 1)
+                }
+            }
+        }
+
+        let nodeIndex = this.btTree.nodes.findIndex(value => value.id === id)
+        if (nodeIndex >= 0) {
+            this.btTree.nodes.splice(nodeIndex, 1)
+        }
+
+        this.btTree.nodes = Layout.doLayout(this.btTree.nodes, this.btTree.edges, "TB")
+        messageMgr.send(MsgType.InitBTPanel, this.btTree)
     }
+
 }

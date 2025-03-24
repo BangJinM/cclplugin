@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import BlackBoard from "./components/BlackBoard.vue";
 import CreateNode from "./components/CreateNode.vue";
-import Nodes from "./components/Nodes.vue";
 import Operate from "./components/Operate.vue";
 import VueFlowController from "./components/VueFlowController.vue";
 
@@ -62,9 +61,6 @@ function handleRightClick(value) {
       <div v-if="currentPanel === 0" class="node-panel">
         <ui-section header="Operates">
           <Operate></Operate>
-        </ui-section>
-        <ui-section header="Nodes">
-          <Nodes></Nodes>
         </ui-section>
       </div>
       <div v-else-if="currentPanel === 1">1</div>
