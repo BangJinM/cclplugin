@@ -8,30 +8,21 @@ let searchValue = ref("");
 let menuRef = ref();
 let createNode = ref();
 let visibleFlag = ref(false);
+let fatherNodeId = 0;
 
 function onClose() {
   messageMgr.send(MsgType.CreateNodePanel, false);
 }
+
 function onSearchInputChange(value: string) {
   if (searchValue.value === value) return;
   searchValue.value = value;
 
-  setTimeout(() => {
-    // let selectItem;
-    // let treeData = convertMenuData(Menu.Instance.getShaderNodeMenu(), false);
-    // if (value) {
-    //   const result = filterMenuByKeyword(treeData, value);
-    //   treeData = result.filterTree;
-    //   selectItem = result.firstSelect;
-    // }
-    // const $dom = menuRef.value;
-    // $dom.tree = treeData;
-    // if (treeData.length > 0) {
-    //   $dom.clear();
-    //   $dom.select(selectItem);
-    //   menuRef.value.positioning(selectItem);
-    //   $dom.render();
-    // }
+  setTimeout(async () => {
+    menuRef.value.clear();
+    let resultMap = await getNodeMenu(value);
+    menuRef.value.tree = resultMap;
+    menuRef.value.render();
   }, 50);
 }
 
@@ -77,77 +68,119 @@ interface TreeDetail {
 }
 
 interface TreeNode {
+  parent: TreeNode;
   detail: TreeDetail;
   children: TreeNode[];
   showArrow: boolean;
+  show: boolean;
+}
+
+function filterRecursive(menuItems: TreeNode[], keywordLowerCase: string) {
+  for (const item of menuItems) {
+    item.show = false;
+
+    const text = item.detail.value.toLowerCase();
+    if (
+      item.children.length === 0 &&
+      (keywordLowerCase.length <= 0 ||
+        text.startsWith(keywordLowerCase) ||
+        text.includes(keywordLowerCase))
+    ) {
+      item.show = true;
+      let target = item.parent;
+      while (target) {
+        if (target.show) break;
+        target.show = true;
+        target = target.parent;
+      }
+    }
+    if (item.children && item.children.length > 0) {
+      filterRecursive(item.children, keywordLowerCase);
+    }
+  }
+}
+function filterItems(menuItems: TreeNode[]) {
+  for (let index = menuItems.length - 1; index >= 0; index--) {
+    if (!menuItems[index].show) {
+      menuItems.splice(index, 1);
+    } else {
+      filterItems(menuItems[index].children);
+    }
+  }
+}
+async function getNodeMenu(keywordLowerCase: string = "") {
+  let btClass = await messageMgr.callSceneMethod("queryBTTreeClassMap");
+
+  let resultMap: Map<string, TreeNode> = new Map();
+  btClass.map((value) => {
+    if (!resultMap.has(value.type)) {
+      resultMap.set(value.type, {
+        detail: { kType: value.type, value: value.type },
+        children: [],
+        showArrow: true,
+        show: true,
+        parent: null,
+      });
+    }
+    resultMap.get(value.type).children.push({
+      detail: { kType: value.type, kClass: value.name, value: value.name },
+      children: [],
+      showArrow: false,
+      show: true,
+      parent: resultMap.get(value.type),
+    });
+  });
+
+  filterRecursive(Array.from(resultMap.values()), keywordLowerCase);
+  let array = Array.from(resultMap.values());
+  filterItems(array);
+  return array;
+}
+
+async function initTree(keywordLowerCase: string = "") {
+  menuRef.value.setTemplate("text", `<span class="name"></span>`);
+  menuRef.value.setTemplateInit("text", ($text) => {
+    $text.$name = $text.querySelector(".name");
+  });
+  menuRef.value.setRender("text", ($text, data) => {
+    $text.$name.innerHTML = data.detail.value;
+  });
+  menuRef.value.tree = await getNodeMenu();
+  menuRef.value.setItemRender;
+  menuRef.value.setTemplateInit(
+    "item",
+    ($div: HTMLElement & { data: { detail: TreeDetail } }) => {
+      $div.addEventListener("click", (event: MouseEvent) => {
+        menuRef.value.clear();
+        menuRef.value.select($div.data);
+        menuRef.value.render();
+
+        if (!$div.data.detail.kClass) return;
+
+        messageMgr.send(
+          MsgType.CreateNode,
+          fatherNodeId,
+          $div.data.detail.kType,
+          $div.data.detail.kClass
+        );
+
+        messageMgr.send(MsgType.CreateNodePanel, false);
+      });
+    }
+  );
 }
 
 onMounted(async () => {
-  messageMgr.register(MsgType.CreateNodePanel, (flag, fatherNodeId) => {
+  messageMgr.register(MsgType.CreateNodePanel, (flag, id) => {
     visibleFlag.value = flag;
+    fatherNodeId = id;
 
     if (!flag) return;
-
     nextTick(async () => {
-      let btClass = await messageMgr.callSceneMethod("queryBTTreeClassMap");
-
-      let resultMap: Map<string, TreeNode> = new Map();
-      btClass.map((value) => {
-        if (!resultMap.has(value.type)) {
-          resultMap.set(value.type, {
-            detail: { kType: value.type, value: value.type },
-            children: [],
-            showArrow: true,
-          });
-        }
-        resultMap.get(value.type).children.push({
-          detail: { kType: value.type, kClass: value.name, value: value.name },
-          children: [],
-          showArrow: false,
-        });
-      });
-
-      let resultStr = [];
-      resultMap.forEach((element) => {
-        resultStr.push(JSON.parse(JSON.stringify(element)));
-      });
-
-      menuRef.value.setTemplate("text", `<span class="name"></span>`);
-      menuRef.value.setTemplateInit("text", ($text) => {
-        $text.$name = $text.querySelector(".name");
-      });
-      menuRef.value.setRender("text", ($text, data) => {
-        $text.$name.innerHTML = data.detail.value;
-      });
-      menuRef.value.tree = resultStr;
-      menuRef.value.setItemRender;
-
-      menuRef.value.setTemplateInit(
-        "item",
-        ($div: HTMLElement & { data: { detail: TreeDetail } }) => {
-          $div.addEventListener("click", (event: MouseEvent) => {
-            menuRef.value.clear();
-            menuRef.value.select($div.data);
-            menuRef.value.render();
-
-            if (!$div.data.detail.kClass) return;
-
-            messageMgr.send(
-              MsgType.CreateNode,
-              fatherNodeId,
-              $div.data.detail.kType,
-              $div.data.detail.kClass
-            );
-
-            messageMgr.send(MsgType.CreateNodePanel, false);
-          });
-        }
-      );
+      initTree();
     });
   });
 });
-
-onpageshow;
 </script>
 
 <style>

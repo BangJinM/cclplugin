@@ -60,7 +60,7 @@ function handleNodeRightClick({ event, node }) {
     },
     {
       label: "删除节点",
-      visible: true,
+      visible: !node.root,
       // accelerator: "Space",
       click: () => {
         messageMgr.send(MsgType.DelNode, node.id);

@@ -81,14 +81,13 @@ export class GraphDataMgr {
     }
 
     CreateNode(fatherId: string, type: BTType, className?: string) {
-
         let findIndex = this.btTree.nodes.findIndex(value => value.id === fatherId)
         if (findIndex < 0) return
 
         let node = {
             id: Editor.Utils.UUID.generate(),
             type: "default",
-            root: true,
+            root: false,
             position: { x: 0, y: 0 },
             data: { label: "" },
             className: className
@@ -111,27 +110,41 @@ export class GraphDataMgr {
     }
 
     DelNode(id) {
-        for (const element of this.btTree.edges) {
-            if (element.source == id) {
-                this.DelNode(element.target)
-            }
-        }
-        for (const element of this.btTree.edges) {
-            if (element.target == id) {
-                let nodeIndex = this.btTree.edges.findIndex(value => value.id === element.id)
-                if (nodeIndex >= 0) {
-                    this.btTree.edges.splice(nodeIndex, 1)
-                }
+        let [nodes, edges] = [new Set<string>(), new Set<string>()]
+
+        this.FindDelInfo(id, nodes, edges)
+
+        for (const element of nodes) {
+            let findIndex = this.btTree.nodes.findIndex(value => value.id === element)
+            if (findIndex >= 0) {
+                this.btTree.nodes.splice(findIndex, 1)
             }
         }
 
-        let nodeIndex = this.btTree.nodes.findIndex(value => value.id === id)
-        if (nodeIndex >= 0) {
-            this.btTree.nodes.splice(nodeIndex, 1)
+        for (const element of edges) {
+            let findIndex = this.btTree.edges.findIndex(value => value.id === element)
+            if (findIndex >= 0) {
+                this.btTree.edges.splice(findIndex, 1)
+            }
         }
 
         this.btTree.nodes = Layout.doLayout(this.btTree.nodes, this.btTree.edges, "TB")
         messageMgr.send(MsgType.InitBTPanel, this.btTree)
+    }
+
+    FindDelInfo(id, nodeIds: Set<string>, edgeIds: Set<string>) {
+        for (const element of this.btTree.edges) {
+            if (element.source == id) {
+                this.FindDelInfo(element.target, nodeIds, edgeIds)
+            }
+        }
+
+        for (let index = this.btTree.edges.length - 1; index >= 0; index--) {
+            if (this.btTree.edges[index].target == id) {
+                edgeIds.add(this.btTree.edges[index].id)
+            }
+        }
+        nodeIds.add(id)
     }
 
 }

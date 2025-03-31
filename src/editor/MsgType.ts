@@ -13,6 +13,7 @@ export enum MsgType {
     /** 重新加载行为树界面 */
     InitBTPanel = "init-bt-panel",
     CreateNodePanel = "create-node-panel",
+    BlackboardPanel = 'blackboard-panel',
     CreateNode = "create-node",
     SelectNode = "select-node",
     DelNode = "del-node",

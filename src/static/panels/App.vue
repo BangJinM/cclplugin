@@ -1,24 +1,48 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { messageMgr } from "../../editor/MessageMgr";
+import { MsgType } from "../../editor/MsgType";
 import BlackBoard from "./components/BlackBoard.vue";
-import CreateNode from "./components/CreateNode.vue";
-import Operate from "./components/Operate.vue";
+import CreateNodePanel from "./components/CreateNodePanel.vue";
+import Inspector from "./components/Inspector.vue";
 import VueFlowController from "./components/VueFlowController.vue";
 
-let currentPanel = ref(0);
-let panels = ["Operate", "Inspector", "BlockBoard"];
-
-function handlePanelChange(value) {
-  currentPanel.value = value || 0;
+function onClickFile() {
+  let menu = [
+    {
+      label: "新建",
+      click: () => {
+        messageMgr.send(MsgType.CreateNewGraphAsset);
+      },
+    },
+    {
+      label: "打开",
+      click: () => {
+        messageMgr.send(MsgType.OpenGraphSource);
+      },
+    },
+    {
+      label: "保存",
+      click: () => {
+        messageMgr.send(MsgType.SaveGraphAsset);
+      },
+    },
+    {
+      label: "另存为",
+      click: () => {
+        messageMgr.send(MsgType.SaveGraphAssetAs);
+      },
+    },
+  ];
+  Editor.Menu.popup({ menu });
 }
 
-function handleRightClick(value) {
-  console.log("dlajdlajlasd");
+function onBlackBoard() {
+  messageMgr.send(MsgType.BlackboardPanel, true);
 }
 </script>
 
 <style>
-.wrapper {
+.app-wrapper {
   display: flex;
   background-color: #2b2b2b;
   width: 100%;
@@ -29,45 +53,56 @@ function handleRightClick(value) {
     Helvetica, sans-serif;
 }
 
-.left {
+.app-left {
   position: relative;
   width: calc(100% - 260px);
   height: 100%;
   display: flex;
 }
 
-.right {
+.app-right {
   width: 260px;
+  height: 100%;
   border-left: 2px solid #050505;
   flex-shrink: 0;
 }
-.node-panel {
+
+.app-header {
+  display: flex;
+  align-items: center;
+  background-color: #141414;
+  width: 100%;
+  height: 25px;
+}
+
+.app-property {
+  height: 50px;
+  width: 50px;
+  overflow: auto;
+  pointer-events: auto;
+  position: absolute;
+  background-color: #302f2f;
+  box-sizing: content-box;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  width: 260px;
+  user-select: none;
+  border-radius: 2px;
 }
 </style>
 
 <template>
-  <div class="wrapper">
-    <div class="left">
+  <header class="app-header">
+    <ui-button @click="onClickFile">文件</ui-button>
+  </header>
+  <section class="app-wrapper">
+    <div class="app-left">
       <VueFlowController></VueFlowController>
     </div>
-    <div class="right">
-      <ui-tab :value="currentPanel" @change="handlePanelChange($event.target.value)">
-        <ui-button v-for="panel of panels" :key="panel">{{ panel }}</ui-button>
-      </ui-tab>
-      <div v-if="currentPanel === 0" class="node-panel">
-        <ui-section header="Operates">
-          <Operate></Operate>
-        </ui-section>
-      </div>
-      <div v-else-if="currentPanel === 1">1</div>
-      <div v-else-if="currentPanel === 2">
-        <BlackBoard></BlackBoard>
-      </div>
+    <div class="app-right">
+      <Inspector></Inspector>
     </div>
-    <CreateNode></CreateNode>
-  </div>
+    <ui-button class="app-property" @click="onBlackBoard">属性</ui-button>
+  </section>
+  <CreateNodePanel></CreateNodePanel>
+  <BlackBoard></BlackBoard>
 </template>
