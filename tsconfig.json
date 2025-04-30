@@ -2,15 +2,18 @@
     "$schema": "https://schemastore.azurewebsites.net/schemas/json/tsconfig.json",
     "compilerOptions": {
         "target": "ES2021",
-        "module": "ES6",
-        "moduleResolution": "node",
+        "module": "CommonJS",
         "inlineSourceMap": true,
         "inlineSources": true,
         "esModuleInterop": true,
-        "strictNullChecks": false,
         "skipLibCheck": true,
+        "strict": true,
         "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "DOM",
+            "ScriptHost",
+            "ES2021"
+        ],
         "importHelpers": true,
         "outDir": "./dist",
         "rootDir": "./src",
@@ -20,4 +23,12 @@
             "@cocos/creator-types/engine",
         ]
     },
+    "include": [
+        "./@types",
+        "./src",
+    ],
+    "exclude": [
+        "./static",
+        "./shader-node/assets"
+    ]
 }
