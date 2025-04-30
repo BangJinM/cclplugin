@@ -1,10 +1,9 @@
-import { FloatWindowConfig, FloatWindowDragTarget } from '../internal';
-import { useDragEvent } from './header';
-import { useResizer } from './resizer';
-
+import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 import { defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from 'vue/dist/vue.js';
-import { MessageMgr, MessageType } from '../../../../../shader-graph';
+import { MessageMgr, MessageType } from '../../../../shader-graph';
+import { useDragEvent } from './header';
 import { setMinSize } from './const';
+import { useResizer } from './resizer';
 
 export default defineComponent({
     name: 'BaseFloatWindow',

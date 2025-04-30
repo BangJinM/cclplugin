@@ -1,4 +1,4 @@
-import { FloatWindowConfig } from '../internal';
+import { FloatWindowConfig } from "./internal";
 
 /**
  * @param header

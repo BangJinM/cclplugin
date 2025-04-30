@@ -2,14 +2,14 @@ import { merge } from 'lodash';
 
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from 'vue/dist/vue.js';
 
-import BaseFloatWindow from '../base';
-import { commonEmits, commonLogic, commonTemplate } from '../common';
-import { FloatWindowConfig, FloatWindowDragTarget } from '../internal';
+import BaseFloatWindow from './baseFloatWindow';
+import { commonEmits, commonLogic, commonTemplate } from './common';
+import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 
-import { GraphConfigMgr, GraphEditorAddOptions, GraphEditorMgr, Menu, MessageMgr } from '../../../../../shader-graph';
-import { convertMenuData, filterMenuByKeyword, getBoundingClientRect, getTitleBarHeight } from '../utils';
+import { GraphConfigMgr, GraphEditorAddOptions, GraphEditorMgr, Menu, MessageMgr } from '../../../../shader-graph';
+import { convertMenuData, filterMenuByKeyword, getBoundingClientRect, getTitleBarHeight } from './utils';
 
-import { contains, MessageType } from '../../../../../shader-graph';
+import { contains, MessageType } from '../../../../shader-graph';
 
 export const DefaultConfig: FloatWindowConfig = {
     key: 'create-node',

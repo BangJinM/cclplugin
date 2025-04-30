@@ -1,5 +1,5 @@
 import { getMinSize } from './const';
-import { FloatWindowConfig } from '../internal';
+import { FloatWindowConfig } from './internal';
 
 const RESIZER_TAG = [
     'top',

@@ -54,7 +54,7 @@ export class GraphPropertyMgr {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
         if (!currentGraphData) return;
 
-        for (const property of currentGraphData.details.properties) {
+        for (const property of currentGraphData.properties) {
             await handle(property, getPropertyDefineByType(property.type));
         }
     }
@@ -87,17 +87,17 @@ export class GraphPropertyMgr {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
 
         // name 是唯一标识，如果存在 name 就重命名
-        // const existingNames = new Set(currentGraphData.properties.map((item: PropertyData) => item.name));
+        const existingNames = new Set(currentGraphData.properties.map((item: PropertyData) => item.name));
         let newName = propertyDefine.name;
-        // let counter = 1;
-        // while (existingNames.has(newName)) {
-        //     newName = `${propertyDefine.name}_${counter}`;
-        //     counter++;
-        // }
+        let counter = 1;
+        while (existingNames.has(newName)) {
+            newName = `${propertyDefine.name}_${counter}`;
+            counter++;
+        }
         const propertyData: PropertyData | undefined = this.createProperty(propertyDefine, newName ?? "");
-        const properties = currentGraphData.details.properties as PropertyData[];
+        const properties = currentGraphData.properties as PropertyData[];
         if (properties) {
-            currentGraphData.details.properties.push(propertyData);
+            currentGraphData.properties.push(propertyData);
             GraphDataMgr.Instance.setDirty(true);
         }
         return propertyData;
@@ -106,16 +106,10 @@ export class GraphPropertyMgr {
     public removeProperty(index: number): PropertyData {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
 
-        const property = currentGraphData.details.properties.splice(index, 1)[0];
+        const property = currentGraphData.properties.splice(index, 1)[0];
 
-        // GraphDataMgr.Instance.reduceToBaseNode(property);
-
-        // const rootGraphData = GraphDataMgr.Instance.getRootGraphData();
-        // this.removePropertyPinInSubGraphNode(rootGraphData, property.id);
-        // for (const graphID in rootGraphData.graphs) {
-        //     this.removePropertyPinInSubGraphNode(rootGraphData.graphs[graphID], property.id);
-        // }
-        // GraphDataMgr.Instance.setDirty(true);
+        GraphDataMgr.Instance.reduceToBaseNode(property);
+        GraphDataMgr.Instance.setDirty(true);
         return property;
     }
 
@@ -129,14 +123,6 @@ export class GraphPropertyMgr {
             console.debug('updatePropertyToGraphNode failed, the graph data is null');
             return;
         }
-
-        // for (const nodeID in GraphDataMgr.Instance.graphData.nodes) {
-        //     const node = GraphDataMgr.Instance.graphData.nodes[nodeID];
-        //     const details = node && node.details as INodeDetails;
-        //     if (details && details.propertyID === property.id) {
-        //         details.title = property.name;
-        //     }
-        // }
 
         GraphDataMgr.Instance.reload();
     }

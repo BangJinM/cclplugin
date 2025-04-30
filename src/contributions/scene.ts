@@ -5,7 +5,6 @@ import previewScene from './preview-scene';
 
 import shaderGraph from '../importer/shader-graph';
 
-import { buildEffect } from '../effect-utils';
 import { addChunks } from './effect-header';
 
 declare const cce: any;
@@ -72,8 +71,6 @@ exports.methods = {
                 type: propertyDefine.type,
                 declareType: propertyDefine.declareType,
                 default: valueDump.value,
-                details: propertyDefine.details,
-                outputs: [],
             };
             shaderPropertyList.set(newPropertyDefine.type, newPropertyDefine);
 

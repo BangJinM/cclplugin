@@ -56,7 +56,6 @@ export class PropertyData {
     id: string = generateUUID();
     type = '';
     name = '';
-    declareType = 'PropertyNode';
     value: any;
 }
 
@@ -70,7 +69,7 @@ export interface GraphData<D extends Object = { [key: string]: any; }> {
     lines: {
         [uuid: string]: LineData;
     };
-    properties: { [key: string]: any }[]
+    properties: PropertyData[]
     details: D;
 }
 

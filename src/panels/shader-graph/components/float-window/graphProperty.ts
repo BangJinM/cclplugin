@@ -1,7 +1,7 @@
 import { debounce, merge } from 'lodash';
 
 import type { IProperty } from '@cocos/creator-types/editor/packages/scene/@types/public';
-import type { PropertyDefine } from '../../../../../../@types/shader-node-type';
+import type { PropertyDefine } from '../../../../../@types/shader-node-type';
 
 import {
     GraphConfigMgr,
@@ -11,10 +11,10 @@ import {
     MessageMgr,
     MessageType,
     PropertyData
-} from '../../../../../shader-graph';
-import BaseFloatWindow from '../base';
-import { commonEmits, commonLogic, commonTemplate } from '../common';
-import { FloatWindowConfig, FloatWindowDragTarget } from '../internal';
+} from '../../../../shader-graph';
+import BaseFloatWindow from './baseFloatWindow';
+import { commonEmits, commonLogic, commonTemplate } from './common';
+import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 
 import { defineComponent, ref } from 'vue/dist/vue.js';
 
@@ -99,12 +99,10 @@ export const component = defineComponent({
         function updateMenuByShaderPropertyDefines() {
             menusRef.value = [];
             iteratePropertyDefines((propertyDefine: PropertyDefine) => {
-                if (propertyDefine.details.menu) {
-                    menusRef.value.push({
-                        label: propertyDefine.details.menu,
-                        data: propertyDefine,
-                    });
-                }
+                menusRef.value.push({
+                    label: propertyDefine.type,
+                    data: propertyDefine,
+                });
             });
         }
 
@@ -177,6 +175,7 @@ export const component = defineComponent({
 
         function onDelete(index: number) {
             GraphPropertyMgr.Instance.removeProperty(index);
+            propertyRefs.value.splice(index, 1);
         }
 
         // 用于隐藏 menu
@@ -249,7 +248,6 @@ export const component = defineComponent({
                     id: variable.id,
                     name: variable.name,
                     type: variable.type,
-                    declareType: variable.declareType,
                     value: variable.value,
                 });
             }

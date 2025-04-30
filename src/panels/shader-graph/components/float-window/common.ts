@@ -1,7 +1,7 @@
 import { nextTick, onMounted, ref, watch } from 'vue/dist/vue.js';
 import { SetupContext } from 'vue/types/v3-setup-context';
 
-import BaseFloatWindow from './base';
+import BaseFloatWindow from './baseFloatWindow';
 import { FloatWindowConfig } from './internal';
 
 export const commonEmits = [

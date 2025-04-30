@@ -104,7 +104,12 @@ export class GraphDataMgr extends BaseMgr {
     }
 
     public setGraphDataByAsset(assetInfo: AssetInfo, asset: string) {
-
+        if (asset) {
+            this.graphData = this.validateGraphData(assetInfo, JSON.parse(asset));
+        } else {
+            console.warn('reload failed, graph data asset is null.');
+            return;
+        }
     }
 
     public async reload() {
