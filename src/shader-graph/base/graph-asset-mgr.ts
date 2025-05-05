@@ -86,7 +86,7 @@ export class GraphAssetMgr {
                 path: PROJECT_PATH,
                 type: 'file',
                 multi: false,
-                filters: [{ name: 'Shader Graph', extensions: ['shadergraph'] }],
+                filters: [{ name: 'Shader Graph', extensions: ['btgraph'] }],
             });
 
             const uuid = await getAssetUuidByPath(result.filePaths[0]);
@@ -108,7 +108,7 @@ export class GraphAssetMgr {
                 path: join(Editor.Project.path, 'assets', 'New Shader Graph'),
                 filters: [{
                     name: 'New Shader Graph',
-                    extensions: ['shadergraph'],
+                    extensions: ['btgraph'],
                 }],
             });
 
@@ -154,7 +154,7 @@ export class GraphAssetMgr {
                 path: join(Editor.Project.path, 'assets', this.shaderGraphAssetInfo?.name || DEFAULT_NAME),
                 filters: [{
                     name: 'Shader Graph',
-                    extensions: ['shadergraph'],
+                    extensions: ['btgraph'],
                 }],
             });
 
@@ -231,11 +231,6 @@ export class GraphAssetMgr {
     }
 
     public assetChange(uuid: string, info: AssetInfo) {
-
-        if (info && info.importer) {
-            MessageMgr.Instance.callSceneMethod('updateEffect', [uuid]);
-        }
-
         // if (this.uuid === uuid && GraphDataMgr.Instance.graphForge && GraphDataMgr.Instance.graphData) {
         //     try {
         //         // 更新名字

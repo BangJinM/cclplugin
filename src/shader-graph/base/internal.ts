@@ -70,7 +70,6 @@ export interface GraphData<D extends Object = { [key: string]: any; }> {
         [uuid: string]: LineData;
     };
     properties: PropertyData[]
-    details: D;
 }
 
 /**

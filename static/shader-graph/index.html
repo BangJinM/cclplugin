@@ -1,5 +1,6 @@
 <div id="shader-graph" ref="shaderGraphRef">
-    <div ref="dirtyRef" hidden>
+    <div id="ui-logic-flow" class="foreground" ref="logicFlowRef"></div>
+    <div ref="dirtyRef" class="ui-graph-forge" hidden>
         <ui-button tooltip="i18n:shader-graph.buttons.save" class="save tiny green" @click="onSave">
             <ui-icon value="check"></ui-icon>
         </ui-button>
@@ -7,8 +8,6 @@
             <ui-icon value="reset" color=""></ui-icon>
         </ui-button>
     </div>
-
-    <div id="ui-logic-flow" class="foreground" ref="logicFlowRef"></div>
     <div ref="foregroundRef" class="foreground" droppable="property" disallowed-event>
         <ui-drag-area class="drag-area" ref="dragAreaRef" @drop="onDragEnd($event)" disallowed-event></ui-drag-area>
         <component v-for="(config, index) in floatWindowConfigList" :key="index" ref="floatWindowRefs"

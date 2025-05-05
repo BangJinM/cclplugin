@@ -8,7 +8,7 @@ function getMenu(assetInfo: MenuAssetInfo) {
         submenu: [
 
             {
-                label: 'Unlit',
+                label: 'BT Graph',
                 async click() {
                     const url = await Editor.Message.request('asset-db', 'generate-available-url', `${AssetsURL}/${DEFAULT_ASSET_NAME}`);
                     const shaderGraph = await GraphDataMgr.createDefaultShaderGraph(getName(url));

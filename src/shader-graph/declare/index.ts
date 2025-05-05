@@ -6,7 +6,6 @@ import {
     nodeMenu,
 } from './block';
 
-let shaderNodeMap = new Map();
 let shaderPropertyMap = new Map();
 
 function getPropertyDefineByType(type: string) {
@@ -14,8 +13,7 @@ function getPropertyDefineByType(type: string) {
 }
 
 async function declareGraphBlock() {
-    const { shaderNodeList, shaderPropertyList, btTreeClassMap } = await MessageMgr.Instance.callSceneMethod('queryShaderNode');
-    shaderNodeMap = new Map(shaderNodeList);
+    const {  shaderPropertyList, btTreeClassMap } = await MessageMgr.Instance.callSceneMethod('queryShaderNode');
     shaderPropertyMap = new Map(shaderPropertyList);
 
     declareNodeMenu(btTreeClassMap);

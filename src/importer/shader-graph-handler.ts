@@ -12,7 +12,7 @@ const ShaderGraphHandler = {
 
     name: shaderGraph.name,
 
-    extends: 'effect',
+    extends: 'json',
 
     assetType: shaderGraph.assetType,
 
@@ -29,7 +29,7 @@ const ShaderGraphHandler = {
                 {
                     label: `bt-graph`,
                     fullFileName: 'bt-graph.btgraph',
-                    template: 'db://test.shadergraph', // 无用
+                    template: 'db://test.btgraph', // 无用
                 }]
         },
         async create(options: { target: string, template: string }): Promise<string | null> {

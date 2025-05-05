@@ -8,8 +8,8 @@ import {
     MessageMgr,
     MessageType
 } from '../../shader-graph';
-import { floatWindowsLogic } from './float-windows';
-import { maskLogic } from './mask';
+import { floatWindowsLogic } from './FloatWindows';
+import { maskLogic } from './Mask';
 
 export default defineComponent({
 
@@ -19,6 +19,7 @@ export default defineComponent({
 
     setup(props, ctx) {
         // 遮罩逻辑
+        let myDiagram: Diagram = null;
         const mask = maskLogic(props, ctx);
         const floatWindows = floatWindowsLogic(props, ctx);
 
@@ -39,7 +40,7 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            const myDiagram = new Diagram(logicFlowRef.value,
+            myDiagram = new Diagram(logicFlowRef.value,
                 {
                     "undoManager.isEnabled": true,
                     layout: new TreeLayout({ angle: 90, layerSpacing: 35 })
@@ -61,19 +62,9 @@ export default defineComponent({
                     .add(
                         new Shape({ strokeWidth: 3, stroke: "#555" }),
                     );
-
-            // it's best to declare all templates before assigning the model
-            myDiagram.model = new TreeModel(
-                [
-                    { key: "1", name: "Don Meow", source: "cat1.png" },
-                    { key: "2", parent: "1", name: "Demeter", source: "cat2.png" },
-                    { key: "3", parent: "1", name: "Copricat", source: "cat3.png" },
-                    { key: "4", parent: "3", name: "Jellylorum", source: "cat4.png" },
-                    { key: "5", parent: "4", name: "Alonzo", source: "cat5.png" },
-                    { key: "6", parent: "5", name: "Munkustrap", source: "cat6.png" }
-                ]);
             MessageMgr.Instance.register(MessageType.DirtyChanged, onDirty);
             MessageMgr.Instance.register(MessageType.DraggingProperty, onDrag);
+            MessageMgr.Instance.register(MessageType.AssetLoaded, onAssetLoaded)
             GraphAssetMgr.Instance.openAsset();
             GraphDataMgr.Instance.init()
         });
@@ -82,6 +73,10 @@ export default defineComponent({
             MessageMgr.Instance.unregister(MessageType.DirtyChanged, onDirty);
             MessageMgr.Instance.unregister(MessageType.DraggingProperty, onDrag);
         });
+
+        function onAssetLoaded() {
+            myDiagram.model.addArrayItem(myDiagram.model.itemArray,)
+        }
 
         function onReset() {
             GraphDataMgr.Instance.restore();

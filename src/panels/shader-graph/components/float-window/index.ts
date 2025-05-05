@@ -1,8 +1,8 @@
 import type { FloatWindowConfig } from './internal';
 
-import FloatWindow from './baseFloatWindow';
-import * as CreateNode from './createNode';
-import * as GraphProperty from './graphProperty';
+import FloatWindow from './BaseFloatWindow';
+import * as CreateNode from './CreateNode';
+import * as GraphProperty from './GraphProperty';
 
 export * from './internal';
 

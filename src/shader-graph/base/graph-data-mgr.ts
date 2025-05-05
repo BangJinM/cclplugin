@@ -24,9 +24,6 @@ export class GraphDataMgr extends BaseMgr {
             nodes: {},
             lines: {},
             properties: [],
-            details: {
-                properties: [],
-            },
         };
 
         let blockData = {
@@ -51,9 +48,6 @@ export class GraphDataMgr extends BaseMgr {
         nodes: {},
         lines: {},
         properties: [],
-        details: {
-            properties: [],
-        },
     };
 
 

@@ -4,7 +4,7 @@ export const methods = {
     async registerShaderGraphImporter380() {
         const { ShaderGraph380 } = await import('./shader-graph-3.8');
         return {
-            extname: ['.shadergraph'],
+            extname: ['.btgraph'],
             importer: ShaderGraph380,
         };
     },

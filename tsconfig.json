@@ -8,6 +8,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "strict": true,
+        "strictNullChecks": false,
         "experimentalDecorators": true,
         "lib": [
             "DOM",

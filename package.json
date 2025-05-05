@@ -84,7 +84,7 @@
                     "handler": "registerShaderGraphImporter",
                     "name": "shader-graph",
                     "extnames": [
-                        ".shadergraph"
+                        ".btgraph"
                     ]
                 }
             ]

@@ -3,7 +3,7 @@ import { readFileSync } from 'fs-extra';
 import { join } from 'path';
 import Vue from 'vue/dist/vue.js';
 
-import ShaderGraph from './view';
+import ShaderGraph from './View';
 
 import { AssetInfo } from '@cocos/creator-types/editor/packages/asset-db/@types/public';
 import {

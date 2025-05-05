@@ -12,7 +12,7 @@ import {
     MessageType,
     PropertyData
 } from '../../../../shader-graph';
-import BaseFloatWindow from './baseFloatWindow';
+import BaseFloatWindow from './BaseFloatWindow';
 import { commonEmits, commonLogic, commonTemplate } from './common';
 import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 
@@ -144,7 +144,7 @@ export const component = defineComponent({
             const menu = `Variables/${propertyData.name}`;
 
             const valueDump = await MessageMgr.Instance.callSceneMethod('queryPropertyValueDumpByType', [
-                propertyData.type, propertyDefine.default,
+                propertyData.type, propertyDefine.value,
             ]);
 
             const propertyItem: PropertyItem = {
@@ -153,7 +153,7 @@ export const component = defineComponent({
                 showDelete: false,
                 valueDump: valueDump,
                 addOptions: {
-                    type: propertyDefine.declareType,
+                    type: propertyDefine.type,
                 },
                 ...propertyData,
             };

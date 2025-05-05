@@ -61,14 +61,5 @@ export type PropertyValueType = Vec2 | Vec3 | Vec4 | number | boolean | Color | 
 export declare class PropertyDefine {
     name: string;
     type: string;
-    // 实际对应的 block 类型
-    declareType: string;
-    default: PropertyValueType;
-    outputs: SlotDefine[];
-    details: {
-        menu: string,
-        style?: IBlockStyle,
-        feature?: IBlockFeature,
-        [key: string]: any
-    };
+    value: PropertyValueType;
 }

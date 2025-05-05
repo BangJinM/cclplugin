@@ -1,24 +1,6 @@
-import { ensureDirSync, readFile, writeFile } from 'fs-extra';
-import { load } from 'js-yaml';
 import { join } from 'path';
 
 module.paths.push(join(Editor.App.path, 'node_modules'));
-
-const { Asset } = require('@editor/asset-db');
-
-import { IModuleOptions } from '../shader-graph';
-import { declareNodeMenu } from '../shader-graph/declare/block';
-import { generateEffectAsset } from './utils-3.8';
-
-const VectorDataType = [
-    'float',
-    'vec2',
-    'vec3',
-    'vec4',
-    'color',
-    'enum',
-    'boolean',
-];
 
 export class ShaderGraph {
 

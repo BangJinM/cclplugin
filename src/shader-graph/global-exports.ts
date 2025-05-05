@@ -8,9 +8,9 @@ const PACKAGE_NAME = PACKAGE_JSON.name;
 
 const PANEL_NAME = `${PACKAGE_NAME}.shader-graph`;
 
-const DEFAULT_NAME = 'New Shader Graph';
+const DEFAULT_NAME = 'New BT Graph';
 
-const DEFAULT_ASSET_NAME = `${DEFAULT_NAME}.shadergraph`;
+const DEFAULT_ASSET_NAME = `${DEFAULT_NAME}.bggraph`;
 
 const SUB_GRAPH_NODE_TYPE = 'SubGraphNode';
 

@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from 'vue/dist/vue.js';
 
-import BaseFloatWindow from './baseFloatWindow';
+import BaseFloatWindow from './BaseFloatWindow';
 import { commonEmits, commonLogic, commonTemplate } from './common';
 import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 

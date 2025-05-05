@@ -19,14 +19,12 @@ export class GraphPropertyMgr {
 
     public getPropertyByID(id: string) {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
-
-        return currentGraphData.details.properties.find((property: PropertyData) => property.id === id);
+        return currentGraphData.properties.find((property: PropertyData) => property.id === id);
     }
 
     public updateProperty(id: string, newPropertyData: PropertyData) {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
-
-        currentGraphData.details.properties = currentGraphData.details.properties.map((item: PropertyData) => {
+        currentGraphData.properties = currentGraphData.properties.map((item: PropertyData) => {
             if (item.id === id) {
                 return newPropertyData;
             }
@@ -40,7 +38,7 @@ export class GraphPropertyMgr {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
         if (!currentGraphData) return;
 
-        currentGraphData.details.properties = currentGraphData.details.properties.map((item: PropertyData) => {
+        currentGraphData.properties = currentGraphData.properties.map((item: PropertyData) => {
             if (item.id === id) {
                 item = value;
             }
@@ -54,7 +52,7 @@ export class GraphPropertyMgr {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
         if (!currentGraphData) return;
 
-        for (const property of currentGraphData.properties) {
+        for (const property of currentGraphData.properties ?? []) {
             await handle(property, getPropertyDefineByType(property.type));
         }
     }
@@ -62,7 +60,7 @@ export class GraphPropertyMgr {
     public exitsProperty(name: string) {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
 
-        for (const property of currentGraphData.details.properties) {
+        for (const property of currentGraphData.properties) {
             if (property.name === name) {
                 return true;
             }
