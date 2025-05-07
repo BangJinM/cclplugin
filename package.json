@@ -3,13 +3,13 @@
     "package_version": 2,
     "version": "1.0.0",
     "editor": ">=3.8.2",
-    "name": "shader-graph",
-    "description": "i18n:shader-graph.description",
+    "name": "bt-graph",
+    "description": "i18n:bt-graph.description",
     "main": "./dist/main.js",
     "scripts": {
         "build": "npm run build-less && tsc",
         "watch": "tsc -w",
-        "build-less": "lessc ./static/shader-graph/style.less > ./static/shader-graph/style.css",
+        "build-less": "lessc ./static/bt-graph/style.less > ./static/bt-graph/style.css",
         "pack": "npx ts-node ./lib/pack.ts",
         "test": "node --test ./tests"
     },
@@ -41,10 +41,10 @@
         "typescript": "^4.3.4"
     },
     "panels": {
-        "shader-graph": {
-            "title": "i18n:shader-graph.title",
+        "bt-graph": {
+            "title": "i18n:bt-graph.title",
             "type": "dockable",
-            "main": "dist/panels/shader-graph/index.js",
+            "main": "dist/panels/bt-graph/index.js",
             "icon": "./static/icon.png",
             "size": {
                 "min-width": 400,
@@ -66,23 +66,16 @@
         },
         "asset-db": {
             "mount": {
-                "path": "./shader-node/assets",
+                "path": "./bt-node/assets",
                 "readonly": true,
                 "visible": "visibleshaderNode",
                 "enable": "enableShaderNode"
-            },
-            "importer": {
-                "script": "./dist/importer/index.js",
-                "priority": [],
-                "list": [
-                    "registerShaderGraphImporter380"
-                ]
             },
             "script": "./dist/importer/index.js",
             "asset-handler": [
                 {
                     "handler": "registerShaderGraphImporter",
-                    "name": "shader-graph",
+                    "name": "bt-graph",
                     "extnames": [
                         ".btgraph"
                     ]
@@ -94,17 +87,12 @@
         },
         "menu": [
             {
-                "path": "i18n:menu.panel/i18n:shader-graph.menu.name",
-                "label": "i18n:shader-graph.menu.open",
+                "path": "i18n:menu.panel/i18n:bt-graph.menu.name",
+                "label": "i18n:bt-graph.menu.open",
                 "message": "open"
             }
         ],
         "shortcuts": [
-            {
-                "message": "popup-create-menu",
-                "mac": "space",
-                "win": "space"
-            },
             {
                 "message": "save",
                 "mac": "cmd+s",
@@ -174,87 +162,82 @@
             },
             "open-asset": {
                 "methods": [
-                    "shader-graph.openAsset"
-                ]
-            },
-            "popup-create-menu": {
-                "methods": [
-                    "shader-graph.onPopupCreateMenu"
+                    "bt-graph.openAsset"
                 ]
             },
             "scene:ready": {
                 "methods": [
-                    "shader-graph.onSceneReady"
+                    "bt-graph.onSceneReady"
                 ]
             },
             "scene:close": {
                 "methods": [
-                    "shader-graph.onSceneClose"
+                    "bt-graph.onSceneClose"
                 ]
             },
             "asset-db:asset-add": {
                 "methods": [
-                    "shader-graph.onAssetAdd"
+                    "bt-graph.onAssetAdd"
                 ]
             },
             "asset-db:asset-delete": {
                 "methods": [
-                    "shader-graph.onAssetDelete"
+                    "bt-graph.onAssetDelete"
                 ]
             },
             "asset-db:asset-change": {
                 "methods": [
-                    "shader-graph.onAssetChange"
+                    "bt-graph.onAssetChange"
                 ]
             },
             "save": {
                 "methods": [
-                    "shader-graph.onSave"
+                    "bt-graph.onSave"
                 ]
             },
             "delete": {
                 "methods": [
-                    "shader-graph.onDelete"
+                    "bt-graph.onDelete"
                 ]
             },
             "copy": {
                 "methods": [
-                    "shader-graph.onCopy"
+                    "bt-graph.onCopy"
                 ]
             },
             "cut": {
                 "methods": [
-                    "shader-graph.onCut"
+                    "bt-graph.onCut"
                 ]
             },
             "paste": {
                 "methods": [
-                    "shader-graph.onPaste"
+                    "bt-graph.onPaste"
                 ]
             },
             "duplicate": {
                 "methods": [
-                    "shader-graph.onDuplicate"
+                    "bt-graph.onDuplicate"
                 ]
             },
             "undo": {
                 "methods": [
-                    "shader-graph.onUndo"
+                    "bt-graph.onUndo"
                 ]
             },
             "redo": {
                 "methods": [
-                    "shader-graph.onRedo"
+                    "bt-graph.onRedo"
                 ]
             },
             "create-group-node": {
                 "methods": [
-                    "shader-graph.onCreateGroupNode"
+                    "bt-graph.onCreateGroupNode"
                 ]
             },
             "restore-group-node": {
                 "methods": [
-                    "shader-graph.onRestoreGroupNode"
+                    "bt-graph.onRestoreGroupNode"
                 ]
             }
         },

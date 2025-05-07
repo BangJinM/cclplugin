@@ -1,6 +1,6 @@
-import type { NodeDefine, PropertyDefine, SlotDefine } from '../../@types/shader-node-type';
+import type { PropertyDefine, SlotDefine } from '../../@types/bt-node-type';
 
-import shaderGraph from '../importer/shader-graph';
+import shaderGraph from '../importer/bt-graph';
 
 declare const cce: any;
 
@@ -26,7 +26,7 @@ exports.methods = {
     },
 
     async queryShaderNode() {
-        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://shader-graph/behavior-tree/Base/Property.ts') as { CollectPropertyMap: Function };
+        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/Property.ts') as { CollectPropertyMap: Function };
         const shaderPropertyList: Map<string, PropertyDefine> = new Map();
         CollectPropertyMap().forEach((propertyDefine: PropertyDefine) => {
             const valueDump = cce.Dump.encode.encodeObject(propertyDefine.value, { default: propertyDefine.value });
@@ -38,7 +38,7 @@ exports.methods = {
             shaderPropertyList.set(newPropertyDefine.type, newPropertyDefine);
         });
 
-        const { btTreeClassMap } = await Editor.Module.importProjectModule('db://shader-graph/behavior-tree/Base/BTClass.ts') as { btTreeClassMap: Map<string, any> };
+        const { btTreeClassMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { btTreeClassMap: Map<string, any> };
         console.log(btTreeClassMap)
 
         let property = []
@@ -56,7 +56,7 @@ exports.methods = {
     },
 
     async queryPropertyValueDumpByType(type: string, value: any) {
-        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://shader-graph/behavior-tree/Base/Property.ts') as { CollectPropertyMap: Function };
+        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/Property.ts') as { CollectPropertyMap: Function };
         let propertyMap = CollectPropertyMap();
         const propertyDefine: PropertyDefine = propertyMap.get(type)!;
         const valueDump = cce.Dump.encode.encodeObject(propertyDefine.value, {});

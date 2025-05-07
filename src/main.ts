@@ -1,4 +1,4 @@
-import { PACKAGE_NAME, PANEL_NAME } from './shader-graph/global-exports';
+import { PACKAGE_NAME, PANEL_NAME } from './bt-graph/global-exports';
 
 /**
  * @en

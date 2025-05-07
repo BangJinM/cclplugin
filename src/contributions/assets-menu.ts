@@ -1,5 +1,5 @@
 import { MenuAssetInfo } from '@cocos/creator-types/editor/packages/package-asset/@types/public';
-import { DEFAULT_ASSET_NAME, GraphDataMgr, PACKAGE_NAME, getName } from '../shader-graph';
+import { DEFAULT_ASSET_NAME, GraphDataMgr, PACKAGE_NAME, getName } from '../bt-graph';
 
 function getMenu(assetInfo: MenuAssetInfo) {
     const AssetsURL = assetInfo ? assetInfo.url : 'db://assets';

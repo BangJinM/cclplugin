@@ -10,7 +10,7 @@ const zip = new AdmZip();
     join(__dirname, '../dist'),
     join(__dirname, '../i18n'),
     join(__dirname, '../static'),
-    join(__dirname, '../shader-node'),
+    join(__dirname, '../bt-node'),
     join(__dirname, '../readme'),
 ].forEach((folder) => {
     zip.addLocalFolder(folder, basename(folder));
@@ -26,4 +26,4 @@ const zip = new AdmZip();
     zip.addLocalFile(file);
 });
 
-zip.writeZip(process.argv[2] ? join(process.argv[2], 'shader-graph.zip') : join(__dirname, '../shader-graph.zip'));
+zip.writeZip(process.argv[2] ? join(process.argv[2], 'bt-graph.zip') : join(__dirname, '../bt-graph.zip'));
