@@ -40,6 +40,7 @@ export interface NodeData {
     name: string;
     type: string;
     root: boolean;
+    properties?: { [name: string]: string };
 }
 
 export interface LineData {
@@ -97,6 +98,8 @@ export enum MessageType {
     DirtyChanged = 'dirty-changed',
     DraggingProperty = 'dragging-property',
     GraphNodeChange = "graph-node-change",
+
+    SelectNodeChange = "select-node-change",
 
     // mask
     UpdateMask = 'update-mask',

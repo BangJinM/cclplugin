@@ -33,7 +33,7 @@ export class BTNode {
     }
 
     /** 获取节点 */
-    public GetNodeByIndex(index: number): BTNode {
+    public GetNodeByIndex(index: number): BTNode | null {
         if (index < this.mChildren.length)
             return this.mChildren[index];
         return null;

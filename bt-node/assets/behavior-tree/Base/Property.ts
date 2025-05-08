@@ -1,29 +1,7 @@
 import { Color, Texture2D, TextureCube, ValueType, Vec2, Vec3, Vec4 } from 'cc';
 import { PropertyType } from './PropertyType';
 
-export type PropertyValueType = Vec2 | Vec3 | Vec4 | number | boolean | Color | Texture2D | TextureCube;
-
-/**
- * 收集 Property 类型
- */
-export function CollectPropertyMap() {
-    // 收集 property
-    let propertyMap = new Map()
-    for (const key in PropertyType) {
-        const type = PropertyType[key as PropertyType];
-        if (typeof type === 'string') {
-            const shaderProperty = new Property(type);
-            shaderProperty.type = type;
-            propertyMap.set(type, {
-                type: type,
-                name: shaderProperty.name,
-                value: shaderProperty.value,
-            });
-        }
-    }
-    return propertyMap;
-}
-
+export type PropertyValueType = Vec2 | Vec3 | Vec4 | number | boolean | string | Color | Texture2D | TextureCube;
 
 export interface PropertyDefine {
     name: string;
@@ -61,6 +39,9 @@ export class Property implements PropertyDefine {
 
     updateDefaultValue() {
         switch (this.type) {
+            case PropertyType.String:
+                this.value = "";
+                break
             case PropertyType.Float:
                 this.value = 0;
                 break;

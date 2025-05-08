@@ -54,7 +54,7 @@ export class GraphNodeMgr {
     public removeNode(key: string) {
         const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
 
-        let deleteChild = (childKey) => {
+        let deleteChild = (childKey: string) => {
             for (const element in currentGraphData.lines) {
                 let value = currentGraphData.lines[element]
 

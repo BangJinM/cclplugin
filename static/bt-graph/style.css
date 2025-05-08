@@ -8,12 +8,29 @@
   margin-right: 2px;
 }
 #bt-graph .ui-graph-forge {
+  position: absolute;
   width: fit-content;
   height: 30px;
   z-index: 9999;
   text-align: left;
 }
+#bt-graph .graph-bg {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+#bt-graph .inspector {
+  width: 150px;
+  height: 100%;
+  x: calc(100% - 150px);
+}
 #bt-graph .foreground {
+  width: calc(100% - 150px);
+  overflow: hidden;
+  z-index: 10;
+}
+#bt-graph .graph-windows {
   overflow: hidden;
   position: absolute;
   z-index: 10;
@@ -22,17 +39,17 @@
   right: 0;
   bottom: 0;
 }
-#bt-graph .foreground .drag-area {
+#bt-graph .graph-windows .drag-area {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 }
-#bt-graph .foreground .drag-area[disallowed-event] {
+#bt-graph .graph-windows .drag-area[disallowed-event] {
   pointer-events: none;
 }
-#bt-graph .foreground[disallowed-event] {
+#bt-graph .graph-windows[disallowed-event] {
   pointer-events: none;
 }
 #bt-graph .mask[show] {
@@ -100,15 +117,13 @@
   width: 28px;
   z-index: 10;
   top: 28px;
-  right: 1px;
+  left: 1px;
   display: flex;
   flex-wrap: wrap;
   background-color: #1F1F1F;
   box-shadow: inset 0 0 1px #2b2b2b;
 }
 #bt-graph .right-tabs .tab {
-  width: 28px;
-  height: 115px;
   writing-mode: tb;
   text-align: center;
   padding: 2px;
@@ -394,4 +409,83 @@
 }
 .create-node .menus {
   height: 100%;
+}
+.graph-inspector .title {
+  display: flex;
+  line-height: 25px;
+  height: 25px;
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: #2B2B2B;
+  justify-content: space-between;
+  color: #cccccc;
+}
+.graph-inspector .property-contents {
+  overflow-y: auto;
+}
+.graph-inspector .property-contents .item {
+  display: flex;
+  padding: 2px;
+}
+.graph-inspector .property-contents .item .prop {
+  flex: 1;
+  --left-width: 150px;
+  width: 70%;
+}
+.graph-inspector .property-contents .item .prop .label {
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: black;
+  width: 100%;
+  user-select: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+}
+.graph-inspector .property-contents .item .prop .label .name {
+  padding-left: 2px;
+  text-overflow: ellipsis;
+}
+.graph-inspector .property-contents .item .prop .label .key {
+  font-size: 8px;
+  padding-left: 2px;
+}
+.graph-inspector .property-contents .item .prop .label:hover {
+  border-color: var(--color-focus-fill-emphasis);
+}
+.graph-inspector .property-contents .item .prop .content {
+  display: flex;
+}
+.graph-inspector .property-contents .item .prop .content ui-prop {
+  flex: 1;
+}
+.graph-inspector .property-menu {
+  position: absolute;
+  top: 45px;
+  right: 4px;
+  z-index: 10;
+  background-color: var(--color-normal-fill-important);
+  border: 1px solid var(--color-border-weak);
+  border-radius: 4px;
+  padding: 2px;
+}
+.graph-inspector .property-menu .option {
+  display: block;
+  padding: 0 12px;
+  border-radius: 2px;
+  margin: 2px;
+  cursor: default;
+}
+.graph-inspector .property-menu .option:hover {
+  background-color: var(--color-hover-fill-normal);
+}
+.graph-inspector .loading {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: 25px;
+  width: 100%;
+  height: calc(100% - 25px);
+  justify-content: center;
 }

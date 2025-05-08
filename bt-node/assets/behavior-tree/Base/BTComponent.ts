@@ -78,7 +78,7 @@ export class BTComponent extends cc.Component implements IBTNodesData {
     AddNodeData(nodeData: IBTNodeData, edgeData: IBTEdgeData) {
         let treeClass: IBTTreeClass = btTreeClassMap.get(nodeData.className)
         this.treeNodeMap.set(nodeData.id, treeClass.func())
-        this.treeNodeMap.get(nodeData.id).SetName(nodeData.id)
+        this.treeNodeMap.get(nodeData.id)?.SetName(nodeData.id)
 
         let sourceNode = this.treeNodeMap.get(edgeData.source)
         let targetNode = this.treeNodeMap.get(edgeData.target)

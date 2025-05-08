@@ -1,6 +1,5 @@
 import { basename, extname, relative } from 'path';
 
-import type { GraphEditorOtherOptions } from './base';
 import { PROJECT_PATH } from './global-exports';
 
 export function generateUUID() {
@@ -16,9 +15,6 @@ export function contains(point: { x: number, y: number }, bounds: { x: number, y
     return point.x >= bounds.x && point.x <= bounds.x + bounds.width && point.y >= bounds.y && point.y <= bounds.y + bounds.height;
 }
 
-export function generatePinID(tag: string, blockType: string, slotType: string, slotDisplayName: string) {
-    return `${tag}_${blockType}_${slotType}_${slotDisplayName}`;
-}
 
 /**
  * 转成在项目 assets 目录下
@@ -40,25 +36,6 @@ export async function getAssetUuidByPath(path?: string | undefined): Promise<str
         return '';
     }
     return uuid;
-}
-
-export function mergeGraphEditorOtherOptions(arr1: GraphEditorOtherOptions[], arr2: GraphEditorOtherOptions[]): GraphEditorOtherOptions[] {
-    const mergedSet = new Set<string>();
-    const array: GraphEditorOtherOptions[] = [];
-
-    for (const obj of arr1) {
-        mergedSet.add(obj.uuid);
-        array.push(obj);
-    }
-
-    for (const obj of arr2) {
-        if (!mergedSet.has(obj.uuid)) {
-            mergedSet.add(obj.uuid);
-            array.push(obj);
-        }
-    }
-
-    return array;
 }
 
 export function getName(path: string): string {

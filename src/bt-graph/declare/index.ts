@@ -13,13 +13,13 @@ function getPropertyDefineByType(type: string) {
 }
 
 async function declareGraphBlock() {
-    const { shaderPropertyList, btTreeClassMap } = await MessageMgr.Instance.callSceneMethod('queryShaderNode');
-    shaderPropertyMap = new Map(shaderPropertyList);
+    const propertyList = await MessageMgr.Instance.callSceneMethod('queryProperty');
+    shaderPropertyMap = new Map(propertyList);
 
+
+    const btTreeClassMap = await MessageMgr.Instance.callSceneMethod('queryBTNode');
     declareNodeMenu(btTreeClassMap);
     applyBlockToMenu()
-
-    console.log(btTreeClassMap)
 
     MessageMgr.Instance.send(MessageType.Declared);
     MessageMgr.Instance.callSceneMethod('afterDeclared');
@@ -28,7 +28,6 @@ async function declareGraphBlock() {
 function iteratePropertyDefines(handle: (define: PropertyDefine) => void) {
     shaderPropertyMap.forEach((define: PropertyDefine) => handle(define));
 }
-
 
 function applyBlockToMenu() {
     for (const element of nodeMenu) {

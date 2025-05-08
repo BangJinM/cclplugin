@@ -44,7 +44,7 @@ export const DefaultConfig: FloatWindowConfig = {
     },
     position: {
         top: '28px',
-        right: '28px',
+        left: '28px',
     },
     events: {
         resizer: true,

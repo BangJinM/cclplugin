@@ -15,7 +15,7 @@ export const maskLogic = (props: {}, ctx: SetupContext | SetupContext<any>) => {
     const createNewList = ref([
         {
             type: 'Unlit',
-            label: Editor.I18n.t('bt-graph.buttons.new') + 'Unlit',
+            label: Editor.I18n.t('bt-graph.buttons.new'),
         },
     ]);
 

@@ -12,14 +12,6 @@ export interface TreeData {
     children: TreeData[],
 }
 
-export function validatePosition(position?: { top?: string; right?: string; left?: string; bottom?: string; }) {
-    return !(!position || (
-        (position.left !== undefined && position.left === '') ||
-        (position.right !== undefined && position.right === '') ||
-        (position.top !== undefined && position.top === '') ||
-        (position.bottom !== undefined && position.bottom === '')
-    ));
-}
 
 export function getBoundingClientRect(target: HTMLElement) {
     if (document.body.getAttribute('name') === 'sub') {
@@ -33,18 +25,6 @@ export function getBoundingClientRect(target: HTMLElement) {
         };
     }
     return target.getBoundingClientRect();
-}
-
-/**
- * 获取 title bar 的高度
- */
-export function getTitleBarHeight() {
-    let titleBarHeight = 25;// 系统 titleBar 的高度
-    if (document.body.getAttribute('name') === 'sub') {
-        // 窗口 title 的高度
-        titleBarHeight += 50;
-    }
-    return titleBarHeight;
 }
 
 export function filterMenuByKeyword(tree: TreeData[], keyword: string): { firstSelect: TreeData | null, filterTree: TreeData[] } {

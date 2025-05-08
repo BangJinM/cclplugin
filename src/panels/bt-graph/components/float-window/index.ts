@@ -3,6 +3,7 @@ import type { FloatWindowConfig } from './internal';
 import FloatWindow from './baseFloatWindow';
 import * as CreateNode from './createNode';
 import * as GraphProperty from './graphProperty';
+import * as Inspector from './inspector';
 
 export * from './internal';
 
@@ -14,6 +15,10 @@ const floatWindowMap = new Map<string, any/*DefineComponent*/>([
     [
         CreateNode.DefaultConfig.key,
         CreateNode.component,
+    ],
+    [
+        "inspector",
+        Inspector.component,
     ]
 ]);
 

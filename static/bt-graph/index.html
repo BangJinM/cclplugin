@@ -1,5 +1,10 @@
 <div id="bt-graph" ref="shaderGraphRef">
-    <div id="ui-logic-flow" class="foreground" ref="logicFlowRef"></div>
+    <div class="graph-bg ">
+        <div id="ui-logic-flow" class="foreground" ref="logicFlowRef"></div>
+        <div class="inspector">
+            <component :is="getFloatWindowByKey('inspector')"></component>
+        </div>
+    </div>
     <div ref="dirtyRef" class="ui-graph-forge" hidden>
         <ui-button tooltip="i18n:bt-graph.buttons.save" class="save tiny green" @click="onSave">
             <ui-icon value="check"></ui-icon>
@@ -8,7 +13,7 @@
             <ui-icon value="reset" color=""></ui-icon>
         </ui-button>
     </div>
-    <div ref="foregroundRef" class="foreground" droppable="property" disallowed-event>
+    <div ref="foregroundRef" class="graph-windows" droppable="property" disallowed-event>
         <ui-drag-area class="drag-area" ref="dragAreaRef" @drop="onDragEnd($event)" disallowed-event></ui-drag-area>
         <component v-for="(config, index) in floatWindowConfigList" :key="index" ref="floatWindowRefs"
             :is="getFloatWindowByKey(config.key)" :config="config" @hide="onHideFloatWindow"></component>

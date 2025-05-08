@@ -1,5 +1,6 @@
 
 export enum PropertyType {
+    String = "String",
     Float = 'Float',
     Boolean = 'Boolean',
     Vector2 = 'Vector2',

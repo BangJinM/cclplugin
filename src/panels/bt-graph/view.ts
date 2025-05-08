@@ -1,4 +1,4 @@
-import { Binding, Diagram, GraphLinksModel, GraphObject, Link, Node, Routing, Shape, TextBlock, TreeLayout } from 'gojs';
+import go, { Binding, Diagram, GraphLinksModel, GraphObject, Link, Node, Routing, Shape, TextBlock, TreeLayout } from 'gojs';
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue/dist/vue.js';
 import {
     GraphAssetMgr,
@@ -39,6 +39,27 @@ export default defineComponent({
             }
         }
 
+        function mouseEnter(e, obj) {
+            var shape = obj.findObject("SHAPE");
+            shape.fill = "#6DAB80";
+            shape.stroke = "#A6E6A1";
+            var text = obj.findObject("TEXT");
+            text.stroke = "white";
+        };
+
+        function mouseLeave(e, obj) {
+            var shape = obj.findObject("SHAPE");
+            shape.fill = obj.data.color;
+            shape.stroke = null;
+            var text = obj.findObject("TEXT");
+            text.stroke = "black";
+        };
+
+        function onSelectionChanged(node) {
+            console.log(node.data)
+            MessageMgr.Instance.send(MessageType.SelectNodeChange, node.key)
+        }
+
 
         // To simplify this code we define a function for creating a context menu button:
         function makeButton(text, action) {
@@ -55,13 +76,19 @@ export default defineComponent({
                     layout: new TreeLayout({ angle: 90, layerSpacing: 35 }),
                 });
             myDiagram.nodeTemplate =
-                new Node("Horizontal",
+                new Node("Auto",
                     {
-                        background: "#44CCFF"
+                        background: "#44CCFF",
+                        mouseEnter: mouseEnter,
+                        mouseLeave: mouseLeave,
+                        selectionChanged: onSelectionChanged
                     })
                     .add(
+                        new Shape("Rectangle", { strokeWidth: 2, stroke: null, name: "SHAPE" }).bind("fill", "color")
+                    )
+                    .add(
                         new TextBlock("Default Text",
-                            { margin: 12, stroke: "white", font: "bold 16px sans-serif" })
+                            { margin: 10, font: "bold 18px Verdana", name: "TEXT" })
                             .bind("text", "name")
                     );
 
@@ -91,6 +118,8 @@ export default defineComponent({
                     })),
                 );
 
+            myDiagram.grid.visible = true;
+            myDiagram.grid.gridCellSize = new go.Size(50, 40);
             myDiagram.animationManager.isEnabled = false
             myDiagram.toolManager.draggingTool.isEnabled = false
             myDiagram.toolManager.linkingTool.isEnabled = false
@@ -122,7 +151,8 @@ export default defineComponent({
                 nodes.push({
                     key: key,
                     name: data.nodes[key].name,
-                    root: data.nodes[key].root
+                    root: data.nodes[key].root,
+                    color: "#96D6D9"
                 })
             }
             let edges = []

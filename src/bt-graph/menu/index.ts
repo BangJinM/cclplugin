@@ -2,7 +2,6 @@ import { getCurrentWindow, screen } from '@electron/remote';
 import EventEmitter from 'events';
 
 import { GraphEditorAddOptions, MessageMgr, MessageType } from '../base';
-import { contains } from '../utils';
 
 export interface MenuTemplateItem extends Editor.Menu.MenuTemplateItem {
     addOptions?: GraphEditorAddOptions;
