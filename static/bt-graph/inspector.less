@@ -1,0 +1,75 @@
+.graph-inspector {
+    .title {
+        display: flex;
+        line-height: 25px;
+        height: 25px;
+        padding-left: 16px;
+        padding-right: 16px;
+        background-color: #2B2B2B;
+        justify-content: space-between;
+        color: #cccccc;
+    }
+
+    .property-contents {
+        overflow-y: auto;
+
+        .item {
+            display: flex;
+            padding: 2px;
+            flex-direction: column;
+
+            .prop {
+                display: flex;
+                flex: 1;
+
+                .label {
+                    width: 50px;
+                }
+
+                .content {
+                    display: flex;
+                    width: calc(100% - 50px);
+                }
+            }
+
+            .dump-value {
+                position: relative;
+                left: 50px;
+                width: calc(100% - 50px);
+            }
+        }
+    }
+
+    .property-menu {
+        position: absolute;
+        top: 45px;
+        right: 4px;
+        z-index: 10;
+        background-color: var(--color-normal-fill-important);
+        border: 1px solid var(--color-border-weak);
+        border-radius: 4px;
+        padding: 2px;
+
+        .option {
+            display: block;
+            padding: 0 12px;
+            border-radius: 2px;
+            margin: 2px;
+            cursor: default;
+
+            &:hover {
+                background-color: var(--color-hover-fill-normal);
+            }
+        }
+    }
+
+    .loading {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        top: 25px;
+        width: 100%;
+        height: calc(100% - 25px);
+        justify-content: center;
+    }
+}
