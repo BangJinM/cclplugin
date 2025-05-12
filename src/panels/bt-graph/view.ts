@@ -8,9 +8,9 @@ import {
     MessageType
 } from '../../bt-graph';
 import { floatWindowsLogic } from './FloatWindows';
+import GojsView from './GojsView';
 import Inspector from './inspector';
 import MaskComponent from './MaskComponent';
-import GojsView from './GojsView';
 
 export default defineComponent({
     components: {
