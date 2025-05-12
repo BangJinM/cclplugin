@@ -4,7 +4,7 @@ import { BTStatus } from "../Base/BTStatus";
 import { BTType } from "../Base/BTType";
 
 @bt_class(BTType.Composite)
-export class SequenceCompositeNode extends BTComposite {
+export class SequenceComposite extends BTComposite {
     constructor() {
         super()
     }

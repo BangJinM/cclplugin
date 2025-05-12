@@ -4,7 +4,7 @@ import { BTStatus } from "../Base/BTStatus";
 import { BTType } from "../Base/BTType";
 
 @bt_class(BTType.Decorator)
-export class InverseDecoratorNode extends BTDecorator {
+export class InverseDecorator extends BTDecorator {
     constructor() {
         super()
     }
