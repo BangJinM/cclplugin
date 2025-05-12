@@ -54,8 +54,7 @@ export class GraphNodeMgr {
     public createNode(options: GraphEditorAddOptions): NodeData {
         return {
             name: options.value,
-            type: options.value,
-            root: false
+            type: options.value
         }
     }
 
@@ -100,5 +99,11 @@ export class GraphNodeMgr {
         deleteChild(key)
         GraphDataMgr.Instance.setDirty(true);
         MessageMgr.Instance.send(MessageType.GraphNodeChange)
+    }
+
+    public updateNode(key: string, newData: NodeData) {
+        const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
+        currentGraphData.nodes[key] = newData
+        GraphDataMgr.Instance.setDirty(true);
     }
 }

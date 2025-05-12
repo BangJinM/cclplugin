@@ -39,7 +39,7 @@ export interface GraphEditorAddOptions {
 export interface NodeData {
     name: string;
     type: string;
-    root: boolean;
+    root?: boolean;
     properties?: { [name: string]: string };
 }
 

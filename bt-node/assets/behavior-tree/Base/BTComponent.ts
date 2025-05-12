@@ -1,15 +1,15 @@
 import * as cc from "cc";
-import { Blackboard } from "./BTBlackboard";
-import { btTreeClassMap, IBTTreeClass } from "./BTClass";
+import { btTreeClassMap, btTreePropertyMap } from "./BTClass";
 import { BTNode } from "./BTNode";
-import { IBTEdgeData, IBTNodeData, IBTNodesData } from "./BTResource";
-const { ccclass, property, requireComponent } = cc._decorator;
+import { Property } from "./Property";
+import { PropertyType } from "./PropertyType";
+const { ccclass, property } = cc._decorator;
 @ccclass("BTComponent")
-export class BTComponent extends cc.Component implements IBTNodesData {
-    nodes: IBTNodeData[] = [];
-    edges: IBTEdgeData[] = [];
-    blackBoard?: Blackboard = new Blackboard();
-    treeNodeMap: Map<string, BTNode> = new Map()
+export class BTComponent extends cc.Component {
+    btName: string = ""
+    btNodes: { [key: string]: BTNode } = {}
+    btLines: { [key: string]: { source: string, target: string } } = {}
+    properties: { [key: string]: Property } = {}
     rootNode: BTNode = null
 
     @property(cc.JsonAsset)
@@ -28,79 +28,56 @@ export class BTComponent extends cc.Component implements IBTNodesData {
     }
 
     buildTree(obj: Record<string, any>) {
-        let rootNodeId: string = ""
-        const nodesDataMap: Map<string, IBTNodeData> = new Map();
-        if (obj.nodes) {
-            for (const node of obj.nodes) {
-                nodesDataMap.set(node.id, node);
-                if (node.root) {
-                    rootNodeId = node.id
+        if (obj.name)
+            this.btName = obj.name
+
+        if (obj.properties) {
+            for (const key in obj.properties) {
+                let data = obj.properties[key]
+                if (data.type && PropertyType[data.type]) {
+                    this.properties[data.id] = new Property(data.type)
+                    this.properties[data.id].setValue(data.value)
                 }
             }
-
-            this.nodes = obj.nodes
         }
 
-        const edgesDataMap: Map<string, IBTEdgeData> = new Map();
-        if (obj.edges) {
-            for (const edge of obj.edges) {
-                edgesDataMap.set(edge.id, edge);
-            }
+        let rootNodeId: string = ""
+        if (obj.nodes) {
+            for (const key in obj.nodes) {
+                let data = obj.nodes[key]
+                let classData = btTreeClassMap.get(data.type)
+                if (data.type && classData) {
+                    let node = Reflect.construct(classData.create, [])
+                    this.btNodes[key] = node
 
-            this.edges = this.edges
-        }
-
-        this.blackBoard = new Blackboard()
-        if (obj.blackBoard) {
-            for (const element of obj.blackBoard) {
-                this.blackBoard.Add(element.key, element.value)
-            }
-        }
-
-        this.treeNodeMap = new Map<string, BTNode>()
-        nodesDataMap.forEach((value: IBTNodeData, key) => {
-            let treeClass: IBTTreeClass = btTreeClassMap.get(value.className)
-            this.treeNodeMap.set(value.id, Reflect.construct(treeClass.func, []))
-        })
-
-        edgesDataMap.forEach((value) => {
-            let sourceNode = this.treeNodeMap.get(value.source)
-            let targetNode = this.treeNodeMap.get(value.target)
-
-            if (sourceNode && targetNode) {
-                sourceNode.AddNode(targetNode)
-            }
-        })
-
-        this.rootNode = this.treeNodeMap.get(rootNodeId)
-    }
-
-    AddNodeData(nodeData: IBTNodeData, edgeData: IBTEdgeData) {
-        let treeClass: IBTTreeClass = btTreeClassMap.get(nodeData.className)
-        this.treeNodeMap.set(nodeData.id, treeClass.func())
-        this.treeNodeMap.get(nodeData.id)?.SetName(nodeData.id)
-
-        let sourceNode = this.treeNodeMap.get(edgeData.source)
-        let targetNode = this.treeNodeMap.get(edgeData.target)
-
-        if (sourceNode && targetNode) {
-            sourceNode.AddNode(targetNode)
-        }
-    }
-
-    DelNodeData(id: string) {
-        let node = this.treeNodeMap.get(id)
-        if (!node) return
-
-        for (const element of node.mChildren) {
-            this.DelNodeData(element.GetName())
-        }
-
-        this.treeNodeMap.delete(id)
-        for (let index = this.edges.length - 1; index >= 0; index--) {
-            if (this.edges[index].target == id || this.edges[index].source == id) {
-                this.edges.splice(index, 1)
+                    if (btTreePropertyMap.get(classData.name)) {
+                        for (const value of btTreePropertyMap.get(classData.name)!) {
+                            if (data.properties[value.name]) {
+                                let propertyId = data.properties[value.name]
+                                if (propertyId && this.properties[propertyId]) {
+                                    node[value.name] = this.properties[propertyId].value
+                                }
+                            }
+                            else {
+                                node[value.name] = new Property(value.type)
+                            }
+                        }
+                    }
+                }
+                if (data.root)
+                    rootNodeId = data.id
             }
         }
+        this.btLines = obj.lines
+
+
+        for (const element in this.btLines) {
+            let line = this.btLines[element]
+            if (line && line.source && line.target && this.btNodes[line.source] && this.btNodes[line.target]) {
+                this.btNodes[line.source].AddNode(this.btNodes[line.target])
+            }
+        }
+
+        this.rootNode = this.btNodes[rootNodeId]
     }
 }

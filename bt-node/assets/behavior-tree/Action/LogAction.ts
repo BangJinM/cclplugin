@@ -8,16 +8,6 @@ import { PropertyType } from "../Base/PropertyType";
 export class LogAction extends BTAction {
     @bt_property(PropertyType.String)
     logStr: string = ""
-    @bt_property(PropertyType.Float)
-    test = ""
-    @bt_property(PropertyType.Vector2)
-    test1 = ""
-    @bt_property(PropertyType.Vector3)
-    test2 = ""
-    @bt_property(PropertyType.Vector4)
-    test3 = ""
-    @bt_property(PropertyType.Texture2D)
-    test4 = ""
     constructor(logStr) {
         super()
         this.logStr = logStr

@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 
-import type { PropertyDefine } from '../../../../../@types/bt-node-type';
+import type { PropertyDefine } from '../../../@types/bt-node-type';
 
 import {
     getPropertyDefineByType,
@@ -8,10 +8,10 @@ import {
     GraphPropertyMgr,
     MessageMgr,
     MessageType
-} from '../../../../bt-graph';
+} from '../../bt-graph';
 
 import { defineComponent, nextTick, ref } from 'vue/dist/vue.js';
-import { GraphNodeMgr } from '../../../../bt-graph/base/graph-node-mgr';
+import { GraphNodeMgr } from '../../bt-graph/base/graph-node-mgr';
 
 export interface PropertyItem {
     /** 类型 */
@@ -31,6 +31,7 @@ export default defineComponent({
         const menusRef = ref<{ label: string; data: { [key: string]: any } }[]>([]);
         const propertyRefs = ref<PropertyItem[]>([]);
         const menuNodeRef = ref()
+        const selectNodeTypeRef = ref("")
 
         const propertyMap: Map<string, PropertyItem> = new Map();
 
@@ -50,6 +51,11 @@ export default defineComponent({
         MessageMgr.Instance.register([MessageType.SelectNodeChange, MessageType.BlackBoardPropertyChange], (id: string) => {
             if (id) selectNodeId = id
             if (!selectNodeId) return
+
+            let node = GraphNodeMgr.Instance.getNodeByID(selectNodeId)
+            if (node) selectNodeTypeRef.value = node.type
+            else selectNodeTypeRef.value = ""
+
             updatePropertiesDebounce();
         });
 
@@ -158,6 +164,7 @@ export default defineComponent({
             menusRef,
             popupMenuRef,
             menuNodeRef,
+            selectNodeTypeRef,
 
             onRender,
             onShowMenu,
@@ -171,11 +178,15 @@ export default defineComponent({
         <ui-label>inspector</ui-label>
     </div>
     <div class="property-contents">
+        <ui-prop>
+            <ui-label slot="label" >类型:</ui-label>
+            <ui-input slot="content" :value="selectNodeTypeRef" readonly></ui-input>
+        </ui-prop>
         <div class="item" v-for="(property, index) in propertyRefs" :key="property.name + '' + index">
-            <div class="prop">
-                <ui-label class="label" :value="property.name"></ui-label>
-                <ui-input class="content" :value="property.propertyKey" @click="onShowMenu(property)"></ui-input>
-            </div>
+            <ui-prop class="prop">
+                <ui-label slot="label" :value="property.name"></ui-label>
+                <ui-input slot="content" :value="property.propertyKey" @click="onShowMenu(property)"></ui-input>
+            </ui-prop>
             <ui-prop no-label class="dump-value" type="dump" :render="onRender(property.valueDump)" readonly> </ui-prop>
         </div>
     </div>

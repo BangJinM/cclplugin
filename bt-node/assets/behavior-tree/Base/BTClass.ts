@@ -5,7 +5,7 @@ import { PropertyType } from "./PropertyType";
 export interface IBTTreeClass {
     name: string
     type: BTType
-    func: Function
+    create: Function
 }
 
 export const btTreePropertyMap: Map<string, { name: string, type: string }[]> = new Map();
@@ -15,7 +15,7 @@ export const btTreeClassMap: Map<string, IBTTreeClass> = new Map();
  */
 export function bt_class(type: BTType): ClassDecorator {
     return function (target) {
-        btTreeClassMap.set(target.name, { type: type, name: target.name, func: target });
+        btTreeClassMap.set(target.name, { type: type, name: target.name, create: target });
         console.log(target.name)
     };
 };

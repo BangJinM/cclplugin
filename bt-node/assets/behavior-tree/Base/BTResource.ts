@@ -1,13 +1,11 @@
-import { Blackboard } from "./BTBlackboard"
+import { Property } from "./Property"
 
 
 export interface IBTNodeData {
-    id: string,
-    type: string,
-    root: boolean,
-    position: { x: number, y: number },
-    data: { [key: string]: any },
-    className: string
+    id: string
+    type: string
+    root?: boolean
+    properties: { [key: string]: string }
 }
 
 export interface IBTEdgeData {
@@ -17,7 +15,8 @@ export interface IBTEdgeData {
 }
 
 export interface IBTNodesData {
-    nodes: IBTNodeData[]
-    edges: IBTEdgeData[]
-    blackBoard?: Blackboard
+    name?: string
+    nodes?: { [key: string]: IBTNodeData }
+    lines?: { [key: string]: IBTEdgeData }
+    properties?: { [key: string]: Property }
 }

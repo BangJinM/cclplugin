@@ -1,0 +1,52 @@
+<div class="mask" ref="maskRef" v-show="displayMaskType !== MaskType.None">
+    <div class="mask-child">
+        <div class="asset-missing" v-if="displayMaskType === MaskType.AssetMissing">
+            <ui-label :value="`i18n:bt-graph.messages.missing_assets.mask_tips`"></ui-label>
+            <div class="button-group-vertical">
+                <div class="button" @click="onOpen()">
+                    <ui-label :value="`i18n:bt-graph.buttons.open`"></ui-label>
+                </div>
+                <div class="button" @click="onSaveAs()">
+                    <ui-label :value="`i18n:bt-graph.buttons.save_as`"></ui-label>
+                </div>
+                <div v-for="(item, index) in createNewList" :key="index" class="button" @click="onCreateNew(item.type)">
+                    <ui-label :value="item.label"></ui-label>
+                </div>
+            </div>
+        </div>
+        <ui-label v-if="displayMaskType === MaskType.WaitSceneReady"
+            :value="`i18n:bt-graph.messages.scene_ready.mask_tips`"></ui-label>
+        <ui-label v-if="displayMaskType === MaskType.WaitLoad"
+            :value="`i18n:bt-graph.messages.wait_load.mask_tips`"></ui-label>
+        <div class="need-create-new-asset" v-if="displayMaskType === MaskType.NeedCreateNewAsset">
+            <ui-label :value="`i18n:bt-graph.messages.need_create_new_asset.mask_tips`"></ui-label>
+            <div class="button-group-vertical">
+                <div class="button" @click="onOpen()">
+                    <ui-label :value="`i18n:bt-graph.buttons.open`"></ui-label>
+                </div>
+                <div v-for="(item, index) in createNewList" :key="index" class="button" @click="onCreateNew(item.type)">
+                    <ui-label :value="item.label"></ui-label>
+                </div>
+            </div>
+        </div>
+        <div class="asset-change" v-if="displayMaskType === MaskType.AssetChange">
+            <ui-label :value="`i18n:bt-graph.messages.assets_change.mask_tips`"></ui-label>
+            <div class="button-group-vertical">
+                <div class="button" @click="onReload()">
+                    <ui-label :value="`i18n:bt-graph.buttons.load`"></ui-label>
+                </div>
+                <div class="button" @click="onOverride()">
+                    <ui-label :value="`i18n:bt-graph.buttons.override`"></ui-label>
+                </div>
+            </div>
+        </div>
+        <div class="asset-change" v-if="displayMaskType === MaskType.NeedSaveBeReloadByRename">
+            <ui-label :value="`i18n:bt-graph.messages.save_and_reload_by_rename.mask_tips`"></ui-label>
+            <div class="button-group-horizontal">
+                <div class="button" @click="onSaveAndReloadByRename()">
+                    <ui-label :value="`i18n:bt-graph.buttons.ok`"></ui-label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
