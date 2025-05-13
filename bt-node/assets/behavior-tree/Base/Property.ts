@@ -1,7 +1,7 @@
-import { Color, Texture2D, TextureCube, ValueType, Vec2, Vec3, Vec4 } from 'cc';
+import { Color, Component, Node, Texture2D, TextureCube, ValueType, Vec2, Vec3, Vec4 } from 'cc';
 import { PropertyType } from './PropertyType';
 
-export type PropertyValueType = Vec2 | Vec3 | Vec4 | number | boolean | string | Color | Texture2D | TextureCube;
+export type PropertyValueType = Vec2 | Vec3 | Vec4 | number | boolean | string | Color | Texture2D | TextureCube | Node | Component | Function;
 
 export interface PropertyDefine {
     name: string;
@@ -29,7 +29,7 @@ export class Property implements PropertyDefine {
         if (this.value instanceof ValueType) {
             this.value.set(value);
         }
-        else if (this.type === PropertyType.Texture2D || this.type === PropertyType.TextureCube) {
+        else if (this.type === PropertyType.Texture2D || this.type === PropertyType.TextureCube || this.type === PropertyType.Node || this.type === PropertyType.Component) {
             (this.value as Texture2D)._uuid = value.uuid;
         }
         else {
@@ -66,6 +66,15 @@ export class Property implements PropertyDefine {
             case PropertyType.TextureCube:
                 this.value = new TextureCube;
                 break;
+            case PropertyType.Node:
+                this.value = new Node
+                break
+            case PropertyType.Component:
+                this.value = new Component
+                break
+            case PropertyType.Function:
+                this.value = new Component.EventHandler
+                break
         }
     }
 

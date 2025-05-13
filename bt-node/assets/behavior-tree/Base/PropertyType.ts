@@ -8,5 +8,8 @@ export enum PropertyType {
     Vector4 = 'Vector4',
     Color = 'Color',
     Texture2D = 'Texture2D',
-    TextureCube = 'TextureCube'
+    TextureCube = 'TextureCube',
+    Node = 'Node',
+    Component = 'Component',
+    Function = 'EventHandler'
 }

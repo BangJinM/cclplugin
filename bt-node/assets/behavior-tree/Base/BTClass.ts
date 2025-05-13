@@ -8,6 +8,7 @@ export interface IBTTreeClass {
     create: Function
 }
 
+export const btTreeVariableMap: Map<string, { name: string, type: string, value: any }> = new Map();
 export const btTreePropertyMap: Map<string, { name: string, type: string }[]> = new Map();
 export const btTreeClassMap: Map<string, IBTTreeClass> = new Map();
 /***
@@ -20,10 +21,26 @@ export function bt_class(type: BTType): ClassDecorator {
     };
 };
 
+/** 收集可以创建的变量 */
+export function bt_variable(): ClassDecorator {
+    return function (target) {
+        let temp = Reflect.construct(target, [])
+        btTreeVariableMap.set(target.name, { name: temp.bName, type: temp.bType, value: temp.GetDefaultValue() })
+        console.log(btTreeVariableMap)
+    }
+}
+
+/**
+ * 收集类中需要展示的变量
+ * @param type 
+ * @returns 
+ */
 export function bt_property(type: PropertyType) {
     return function (target, propertyKey) {
-        if (!btTreePropertyMap.has(target.constructor.name))
+        if (!btTreePropertyMap.has(target.constructor.name)) {
             btTreePropertyMap.set(target.constructor.name, [])
+        }
+
         btTreePropertyMap.get(target.constructor.name)?.push({
             name: propertyKey,
             type: type
@@ -41,15 +58,13 @@ export function CollectPropertyMap() {
     let propertyMap = new Map()
     for (const key in PropertyType) {
         const type = PropertyType[key as PropertyType];
-        if (typeof type === 'string') {
-            const shaderProperty = new Property(type);
-            shaderProperty.type = type;
-            propertyMap.set(type, {
-                type: type,
-                name: shaderProperty.name,
-                value: shaderProperty.value,
-            });
-        }
+        const shaderProperty = new Property(type);
+        shaderProperty.type = type;
+        propertyMap.set(type, {
+            type: type,
+            name: shaderProperty.name,
+            value: shaderProperty.value,
+        });
     }
     return propertyMap;
 }
