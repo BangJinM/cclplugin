@@ -1,15 +1,15 @@
 import * as cc from "cc";
-import { btTreeClassMap, btTreePropertyMap } from "./BTClass";
+import { BTVariable } from "../Variable/BTVariable";
+import { PropertyType } from "../Variable/PropertyType";
+import { btTreeClassMap, btTreePropertyMap, btTreeVariableMap } from "./BTClass";
 import { BTNode } from "./BTNode";
-import { Property } from "./Property";
-import { PropertyType } from "./PropertyType";
 const { ccclass, property } = cc._decorator;
 @ccclass("BTComponent")
 export class BTComponent extends cc.Component {
     btName: string = ""
     btNodes: { [key: string]: BTNode } = {}
     btLines: { [key: string]: { source: string, target: string } } = {}
-    properties: { [key: string]: Property } = {}
+    properties: { [key: string]: BTVariable<any> } = {}
     rootNode: BTNode = null
 
     @property(cc.JsonAsset)
@@ -35,8 +35,8 @@ export class BTComponent extends cc.Component {
             for (const key in obj.properties) {
                 let data = obj.properties[key]
                 if (data.type && PropertyType[data.type]) {
-                    this.properties[data.id] = new Property(data.type)
-                    this.properties[data.id].setValue(data.value)
+                    this.properties[data.id] = Reflect.construct(btTreeVariableMap.get(data.type)!.create, [])
+                    this.properties[data.id].SetValue(data.value)
                 }
             }
         }
@@ -59,7 +59,7 @@ export class BTComponent extends cc.Component {
                                 }
                             }
                             else {
-                                node[value.name] = new Property(value.type)
+                                node[value.name] = Reflect.construct(btTreeVariableMap.get(data.type)!.create, [])
                             }
                         }
                     }

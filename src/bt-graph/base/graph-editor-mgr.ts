@@ -1,10 +1,10 @@
-import { BaseMgr, MessageMgr } from './index';
+import { MessageMgr } from './index';
 import { GraphEditorAddOptions, GraphEditorOtherOptions, MessageType } from './internal';
 
 /**
  * graph 的基础操作，增、删
  */
-export class GraphEditorMgr extends BaseMgr {
+export class GraphEditorMgr {
 
     static _instance: GraphEditorMgr | null = null;
     public static get Instance(): GraphEditorMgr {

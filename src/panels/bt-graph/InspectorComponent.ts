@@ -3,11 +3,11 @@ import { debounce } from 'lodash';
 import type { PropertyDefine } from '../../../@types/bt-node-type';
 
 import {
-    getPropertyDefineByType,
     GraphEditorMgr,
     GraphPropertyMgr,
     MessageMgr,
-    MessageType
+    MessageType,
+    projectData
 } from '../../bt-graph';
 
 import { defineComponent, nextTick, ref } from 'vue/dist/vue.js';
@@ -76,7 +76,7 @@ export default defineComponent({
                 console.debug('data undefined or define ', propertyData);
                 return;
             }
-            let define = getPropertyDefineByType(propertyData.type)
+            let define = projectData.getPropertyDefineByType(propertyData.type)
             let node = GraphNodeMgr.Instance.getNodeByID(selectNodeId)
             let value = define.value
             let propertyKey = ""
@@ -85,7 +85,7 @@ export default defineComponent({
                 if (tp.value) value = tp.value
                 propertyKey = tp.name
             }
-            const valueDump = await MessageMgr.Instance.callSceneMethod('queryPropertyValueDumpByType', [
+            const valueDump = await MessageMgr.Instance.callSceneMethod('queryVariableType', [
                 propertyData.type, value
             ]);
 
@@ -107,7 +107,7 @@ export default defineComponent({
 
             let node = GraphNodeMgr.Instance.getNodeByID(selectNodeId)
 
-            const propertyList = await MessageMgr.Instance.callSceneMethod('queryBTNodeProperty', [node.type]);
+            const propertyList = await MessageMgr.Instance.callSceneMethod('queryNodeProperty', [node.type]);
             let properties: Map<string, PropertyDefine> = new Map(propertyList);
             for (const [name, property] of properties) {
                 await createPropertyItem(property);
@@ -187,7 +187,6 @@ export default defineComponent({
                 <ui-label slot="label" :value="property.name"></ui-label>
                 <ui-input slot="content" :value="property.propertyKey" @click="onShowMenu(property)"></ui-input>
             </ui-prop>
-            <ui-prop no-label class="dump-value" type="dump" :render="onRender(property.valueDump)" readonly> </ui-prop>
         </div>
     </div>
     <div ref="menuNodeRef" class="property-menu" v-if="popupMenuRef">

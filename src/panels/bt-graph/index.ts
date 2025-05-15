@@ -3,7 +3,7 @@ import { readFileSync } from 'fs-extra';
 import { join } from 'path';
 import Vue from 'vue/dist/vue.js';
 
-import ShaderGraph from './view';
+import ShaderGraph from './ViewComponent';
 
 import { AssetInfo } from '@cocos/creator-types/editor/packages/asset-db/@types/public';
 import {
@@ -14,7 +14,7 @@ import {
     MaskType,
     MessageMgr,
     PANEL_NAME,
-    declareGraphBlock
+    projectData
 } from '../../bt-graph';
 import * as Shortcuts from './shortcuts';
 
@@ -44,7 +44,7 @@ const options = {
             }
 
             MessageMgr.Instance.setSceneReady(true);
-            await declareGraphBlock();
+            await projectData.declareGraphBlock();
             await GraphAssetMgr.Instance.load();
             MaskMgr.Instance.hide(MaskType.WaitLoad);
             MaskMgr.Instance.hide(MaskType.WaitSceneReady);

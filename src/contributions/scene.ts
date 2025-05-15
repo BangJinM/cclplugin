@@ -1,33 +1,27 @@
 import type { PropertyDefine } from '../../@types/bt-node-type';
 
-import shaderGraph from '../importer/bt-graph';
 
 declare const cce: any;
 
 exports.methods = {
-    /**
-     * 注册后需要让场景进程同步一下节点数据
-     */
-    afterDeclared() {
-        shaderGraph.reset();
-    },
+    async queryVariableMap() {
+        const { btTreeVariableMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { btTreeVariableMap: Map<string, any> };
+        console.log(btTreeVariableMap)
 
-    async queryProperty() {
-        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { CollectPropertyMap: Function };
-        const shaderPropertyList: Map<string, PropertyDefine> = new Map();
-        CollectPropertyMap().forEach((propertyDefine: PropertyDefine) => {
+        const variableMap: Map<string, PropertyDefine> = new Map();
+        btTreeVariableMap.forEach((propertyDefine: PropertyDefine) => {
             const valueDump = cce.Dump.encode.encodeObject(propertyDefine.value, { default: propertyDefine.value });
             const newPropertyDefine: PropertyDefine = {
                 name: propertyDefine.name,
                 type: propertyDefine.type,
                 value: valueDump.value,
             };
-            shaderPropertyList.set(newPropertyDefine.type, newPropertyDefine);
+            variableMap.set(newPropertyDefine.type, newPropertyDefine);
         });
-        return [...shaderPropertyList]
+        return [...variableMap]
     },
 
-    async queryBTNode() {
+    async queryNodeMap() {
         const { btTreeClassMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { btTreeClassMap: Map<string, any> };
         console.log(btTreeClassMap)
 
@@ -41,7 +35,7 @@ exports.methods = {
         return property
     },
 
-    async queryBTNodeProperty(type) {
+    async queryNodeProperty(type) {
         const { CollectNodeProperty } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { CollectNodeProperty: Function };
         const propertyList: Map<string, PropertyDefine> = new Map();
         CollectNodeProperty(type).forEach((propertyDefine: PropertyDefine) => {
@@ -57,10 +51,12 @@ exports.methods = {
         return [...propertyList]
     },
 
-    async queryPropertyValueDumpByType(type: string, value: any) {
-        const { CollectPropertyMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { CollectPropertyMap: Function };
-        let propertyMap = CollectPropertyMap();
-        const propertyDefine: PropertyDefine = propertyMap.get(type)!;
+    async queryVariableType(type: string, value: any) {
+        const { btTreeVariableMap } = await Editor.Module.importProjectModule('db://bt-graph/behavior-tree/Base/BTClass.ts') as { btTreeVariableMap: Map<string, any> };
+        const propertyDefine: PropertyDefine = btTreeVariableMap.get(type)!;
+        console.log(btTreeVariableMap)
+        console.log(type)
+        console.log(propertyDefine)
         const valueDump = cce.Dump.encode.encodeObject(propertyDefine.value, {});
         valueDump.value = value;
         return valueDump;

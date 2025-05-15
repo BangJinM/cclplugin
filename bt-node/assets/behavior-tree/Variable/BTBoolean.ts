@@ -1,5 +1,5 @@
 import { bt_variable } from "../Base/BTClass";
-import { PropertyType } from "../Base/PropertyType";
+import { PropertyType } from "./PropertyType";
 import { BTVariable } from "./BTVariable";
 
 @bt_variable()

@@ -2,12 +2,12 @@
 
 import { AssetInfo } from '@cocos/creator-types/editor/packages/asset-db/@types/public';
 import { generateUUID } from '../utils';
-import { BaseMgr, GraphData, MaskMgr, MessageMgr, MessageType } from './index';
+import { GraphData, MaskMgr, MessageMgr, MessageType } from './index';
 
 /**
  * 用于处理 bt-graph 数据
  */
-export class GraphDataMgr extends BaseMgr {
+export class GraphDataMgr {
 
     static _instance: GraphDataMgr | null = null;
 

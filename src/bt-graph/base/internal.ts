@@ -60,7 +60,7 @@ export class PropertyData {
 
 
 // Graph 的序列化数据
-export interface GraphData<D extends Object = { [key: string]: any; }> {
+export interface GraphData {
     name?: string,
     nodes: {
         [uuid: string]: NodeData;

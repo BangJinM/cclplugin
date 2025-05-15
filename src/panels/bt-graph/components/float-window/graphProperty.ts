@@ -5,11 +5,10 @@ import type { PropertyDefine } from '../../../../../@types/bt-node-type';
 
 import {
     GraphConfigMgr,
-    GraphEditorAddOptions,
     GraphPropertyMgr,
-    iteratePropertyDefines,
     MessageMgr,
     MessageType,
+    projectData,
     PropertyData
 } from '../../../../bt-graph';
 import BaseFloatWindow from './baseFloatWindow';
@@ -23,7 +22,8 @@ type PropertyItem = {
     rename: boolean;
     showDelete: boolean;
     valueDump: IProperty | undefined;
-    addOptions?: GraphEditorAddOptions;
+    components?: string[];
+    methods?: string[];
     value: any;
 } & PropertyData;
 
@@ -36,10 +36,10 @@ export const DefaultConfig: FloatWindowConfig = {
     },
     base: {
         title: 'i18n:bt-graph.graph_property.title',
-        width: '300px',
-        height: '240px',
-        minWidth: '300px',
-        minHeight: '240px',
+        width: '530px',
+        height: '300px',
+        minWidth: '530px',
+        minHeight: '300px',
         defaultShow: false,
     },
     position: {
@@ -98,9 +98,9 @@ export const component = defineComponent({
 
         function updateMenuByShaderPropertyDefines() {
             menusRef.value = [];
-            iteratePropertyDefines((propertyDefine: PropertyDefine) => {
+            projectData.iteratePropertyDefines((propertyDefine: PropertyDefine) => {
                 menusRef.value.push({
-                    label: propertyDefine.type,
+                    label: propertyDefine.name,
                     data: propertyDefine,
                 });
             });
@@ -143,9 +143,13 @@ export const component = defineComponent({
 
             const menu = `Variables/${propertyData.name}`;
 
-            const valueDump = await MessageMgr.Instance.callSceneMethod('queryPropertyValueDumpByType', [
+
+            const valueDump = await MessageMgr.Instance.callSceneMethod('queryVariableType', [
                 propertyData.type, propertyData.value ?? propertyDefine.value,
             ]);
+
+
+
 
             const propertyItem: PropertyItem = {
                 menu: menu,
@@ -154,6 +158,8 @@ export const component = defineComponent({
                 valueDump: valueDump,
                 ...propertyData,
             };
+
+            setCompMethods(propertyItem)
 
             propertyMap.set(propertyData.id, propertyItem);
             return propertyItem;
@@ -250,6 +256,67 @@ export const component = defineComponent({
             }
         }
 
+        async function onConfirm(value, variable: PropertyItem, index = 0) {
+            if (variable.type == "Node" || variable.type == "Component") {
+                if (!variable.value)
+                    variable.value = {}
+                variable.value.uuid = value
+            } else if (variable.type == "Function") {
+                if (!variable.value)
+                    variable.value = {}
+                if (index == 0) {
+                    variable.value.uuid = value
+                    variable.value.component = ""
+                    variable.value.methodName = ""
+                }
+                else if (index == 1) {
+                    variable.value.component = value
+                    variable.value.methodName = ""
+                }
+                else variable.value.methodName = value
+
+                setCompMethods(variable)
+            }
+            GraphPropertyMgr.Instance.updatePropertyValue(variable.id, {
+                id: variable.id,
+                name: variable.name,
+                type: variable.type,
+                value: variable.value,
+            });
+        }
+
+        async function setCompMethods(propertyData: PropertyItem) {
+            if (propertyData.type != "Function") return
+
+            if (!propertyData.value || !propertyData.value.uuid)
+                return
+
+            const [nodeInfo, compMethodInfo] = await Promise.all([
+                Editor.Message.request("scene", "query-node", propertyData.value.uuid),
+                Editor.Message.request("scene", "query-component-function-of-node", propertyData.value.uuid),
+            ]);
+
+            if (!nodeInfo) return
+
+            propertyData.components = []
+            propertyData.methods = []
+
+            for (const element in compMethodInfo) {
+                propertyData.components.push(element)
+            }
+
+            if (propertyData.value.component) {
+                let methods = compMethodInfo[propertyData.value.component] || []
+                for (const key of methods) {
+                    propertyData.methods.push(key)
+                }
+            }
+
+
+            console.log(nodeInfo)
+            console.log(compMethodInfo)
+        }
+
         function show() {
             common.show();
             updatePropertiesDebounce();
@@ -271,6 +338,7 @@ export const component = defineComponent({
             onDelete,
 
             onDumpConfirm,
+            onConfirm,
 
             goToRename,
             onRenameSubmit,
@@ -285,75 +353,57 @@ export const component = defineComponent({
     template: commonTemplate({
         css: 'graph-property',
         section: `
-<div class="property-title">
-    <ui-label class="name" 
-        value="i18n:bt-graph.graph_property.add">
-    </ui-label>
-    <ui-icon class="add"  
-        value="add-more"
-        @click.stop="onPopupMenu()"
-        tooltip="i18n:bt-graph.graph_property.add">
-    </ui-icon>
-</div>
 
-<div class="property-contents">
-    <div
-        class="item"
-        v-for="(property, index) in propertyRefs" 
-        :key="property.name + '' + index"
-        @mouseenter="onMouseEnter(property)"
-        @mouseleave="onMouseLeave(property)"
-    >
-        <ui-prop class="prop">   
-            <ui-input slot="label" class="input"
-                v-if="property.rename"
-                :value="property.name"
-                @blur="onRenameSubmit($event.target.value, property)"
-                @keydown.stop
-                @keydown.enter="$event.target.blur()"
-                @keydown.esc="onRenameCancel(property)"
-                @click.stop
-                @dblclick.stop
-                @change.stop
-                v-focus
-            ></ui-input>
-            <ui-drag-item slot="label" class="label" type="property"   v-else  @dblclick.stop="goToRename($event, property, index)" >
-                <ui-icon class="key" value="key"></ui-icon>
-                <ui-label
-                    class="name"
-                    :value="property.name"
-                    :tooltip="property.name"
-                ></ui-label>
-            </ui-drag-item>
-            <div slot="content" class="content">
-                <ui-prop no-label
-                    type="dump"
-                    :render="onRender(property.valueDump)"
-                    @confirm-dump="onDumpConfirm($event, property)"
-                >
-                </ui-prop>
-            </div>
-        </ui-prop>
-        <div class="delete">
-            <ui-icon class="icon" v-if="property.showDelete"
-                :tooltip="'i18n:bt-graph.graph_property.delete'"
-                value="close" 
-                @click="onDelete(index)"
-            ></ui-icon>
+        <div class="property-title">
+            <ui-label class="name" value="i18n:bt-graph.graph_property.add">
+            </ui-label>
+            <ui-icon class="add" value="add-more" @click.stop="onPopupMenu()" tooltip="i18n:bt-graph.graph_property.add">
+            </ui-icon>
         </div>
-    </div>
-</div>
 
-<div class="property-menu"
-    v-if="popupMenuRef"
->
-    <ui-label class="option" 
-        v-for="(menu, index) in menusRef" 
-        :key="menu.label + '' + index"
-        :value="menu.label"
-        @click.stop="addProperty(menu.data)"
-    ></ui-label>
-</div>
+        <div class="property-contents">
+            <div class="item" v-for="(property, index) in propertyRefs" :key="property.name + '' + index"
+                @mouseenter="onMouseEnter(property)" @mouseleave="onMouseLeave(property)">
+                <ui-prop class="prop">
+                    <ui-input slot="label" class="input" v-if="property.rename" :value="property.name"
+                        @blur="onRenameSubmit($event.target.value, property)" @keydown.stop
+                        @keydown.enter="$event.target.blur()" @keydown.esc="onRenameCancel(property)" @click.stop @dblclick.stop
+                        @change.stop v-focus></ui-input>
+                    <ui-drag-item slot="label" class="label" type="property" v-else
+                        @dblclick.stop="goToRename($event, property, index)">
+                        <ui-icon class="key" value="key"></ui-icon>
+                        <ui-label class="name" :value="property.name" :tooltip="property.name"></ui-label>
+                    </ui-drag-item>
+                    <div slot="content" class="content">
+                        <ui-node v-if="property.type == 'Node'" droppable="cc.Node" :value="property.value?.uuid" @confirm="onConfirm($event.target.value, property)"></ui-node>
+                        <ui-component v-else-if="property.type == 'Component'" :value="property.value?.uuid" @confirm="onConfirm($event.target.value, property)"></ui-component>
+                        <div v-else-if="property.type == 'Function'">
+                            <ui-node :value="property.value?.uuid" @confirm="onConfirm($event.target.value, property, 0)"></ui-node>
+                            <ui-select :value="property.value?.component" @confirm="onConfirm($event.target.value, property,1)">
+                                <option v-for="comp of property.components" :value="comp" :key="comp">
+                                    {{ comp }}
+                                </option>
+                            </ui-select>
+                            <ui-select :value="property.value?.methodName" @confirm="onConfirm($event.target.value, property, 2)">
+                               <option v-for="method of property.methods" :value="method" :key="method">
+                                    {{ method }}
+                                </option>
+                            </ui-select>
+                        </div>
+                        <ui-prop v-else no-label type="dump" :render="onRender(property.valueDump)" @confirm-dump="onDumpConfirm($event, property)"> </ui-prop>
+                    </div>
+                </ui-prop>
+                <div class="delete">
+                    <ui-icon class="icon" v-if="property.showDelete" :tooltip="'i18n:bt-graph.graph_property.delete'"
+                        value="close" @click="onDelete(index)"></ui-icon>
+                </div>
+            </div>
+        </div>
+
+        <div class="property-menu" v-if="popupMenuRef">
+            <ui-label class="option" v-for="(menu, index) in menusRef" :key="menu.label + '' + index" :value="menu.label"
+                @click.stop="addProperty(menu.data)"></ui-label>
+        </div>
         `,
         footer: `
             <ui-loading class="loading" v-show="loading"></ui-loading>

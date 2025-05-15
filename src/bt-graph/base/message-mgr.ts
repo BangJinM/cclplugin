@@ -111,7 +111,7 @@ export class MessageMgr {
 
     async callSceneMethod(method: string, args?: any[]): Promise<any> {
         return new Promise((resolve, reject) => {
-            const callback = function(error: any, data: any) {
+            const callback = function (error: any, data: any) {
                 if (error) {
                     reject(error);
                     return;

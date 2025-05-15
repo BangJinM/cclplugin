@@ -1,7 +1,6 @@
 import { merge } from 'lodash';
 
 import { PACKAGE_JSON, PACKAGE_NAME } from '../global-exports';
-import { BaseMgr } from './base-mgr';
 import { IFloatWindowConfig, IGraphConfigs } from './internal';
 
 const CONFIG_KEY = 'bt-graph.graph-configs';
@@ -9,7 +8,7 @@ const CONFIG_KEY = 'bt-graph.graph-configs';
 /**
  * 用于处理 bt-graph 配置存储
  */
-export class GraphConfigMgr extends BaseMgr {
+export class GraphConfigMgr {
 
     static _instance: GraphConfigMgr | null = null;
 

@@ -9,7 +9,7 @@ import {
 } from '../../bt-graph';
 import { floatWindowsLogic } from './FloatWindows';
 import GojsView from './GojsView';
-import Inspector from './inspector';
+import Inspector from './InspectorComponent';
 import MaskComponent from './MaskComponent';
 
 export default defineComponent({

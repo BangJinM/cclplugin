@@ -1,8 +1,8 @@
 import type { PropertyDefine } from '../../../@types/bt-node-type';
 
-import { getPropertyDefineByType } from '../declare';
 import { GraphNodeMgr } from './graph-node-mgr';
 import { GraphDataMgr, MessageMgr, MessageType, PropertyData } from './index';
+import { projectData } from './ProjectData';
 
 /**
  * 用于处理 Property
@@ -54,7 +54,7 @@ export class GraphPropertyMgr {
         if (!currentGraphData) return;
 
         for (const property of currentGraphData.properties ?? []) {
-            await handle(property, getPropertyDefineByType(property.type));
+            await handle(property, projectData.getPropertyDefineByType(property.type));
         }
     }
 

@@ -5,10 +5,10 @@ import type { AssetInfo } from '@cocos/creator-types/editor/packages/asset-db/@t
 
 import { MaskType } from './internal';
 
-import { declareGraphBlock } from '../declare';
 import { DEFAULT_NAME, PACKAGE_JSON, PROJECT_PATH } from '../global-exports';
 import { convertToProjectDbUrl, getAssetUuidByPath } from '../utils';
 import { GraphConfigMgr, GraphDataMgr, MaskMgr, MessageMgr, MessageType } from './index';
+import { projectData } from './ProjectData';
 
 /**
  * 用于处理 bt-graph Asset 资源的存储
@@ -38,7 +38,7 @@ export class GraphAssetMgr {
         const isReady = await MessageMgr.Instance.checkSceneReady();
         if (isReady) {
             MaskMgr.Instance.show(MaskType.WaitLoad);
-            await declareGraphBlock();
+            await projectData.declareGraphBlock();
             await this.load();
         } else {
             MessageMgr.Instance.setSceneReady(false);

@@ -1,4 +1,3 @@
-export { BaseMgr } from './base-mgr';
 export { GraphAssetMgr } from './graph-asset-mgr';
 export { GraphConfigMgr } from './graph-config-mgr';
 export { GraphDataMgr } from './graph-data-mgr';

@@ -6,7 +6,7 @@ import BaseFloatWindow from './baseFloatWindow';
 import { commonEmits, commonLogic, commonTemplate } from './common';
 import { FloatWindowConfig, FloatWindowDragTarget } from './internal';
 
-import { GraphConfigMgr, GraphEditorAddOptions, GraphEditorMgr, Menu, MessageMgr } from '../../../../bt-graph';
+import { GraphConfigMgr, GraphEditorAddOptions, GraphEditorMgr, MessageMgr, projectData } from '../../../../bt-graph';
 import { convertMenuData, filterMenuByKeyword, getBoundingClientRect } from './utils';
 
 import { contains, MessageType } from '../../../../bt-graph';
@@ -183,7 +183,7 @@ export const component = defineComponent({
                 `;
             }
 
-            menuRef.value.tree = convertMenuData(Menu.Instance.getCreateNodeMenu(), false);
+            menuRef.value.tree = convertMenuData(projectData.getNodeMenu(), false);
             menuRef.value.render();
         }
 
@@ -261,7 +261,7 @@ export const component = defineComponent({
 
             setTimeout(() => {
                 let selectItem;
-                let treeData = convertMenuData(Menu.Instance.getCreateNodeMenu(), false);
+                let treeData = convertMenuData(projectData.getNodeMenu(), false);
                 if (value) {
                     const result = filterMenuByKeyword(treeData, value);
                     treeData = result.filterTree;

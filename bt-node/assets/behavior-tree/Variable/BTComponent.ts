@@ -1,19 +1,19 @@
 import { bt_variable } from "../Base/BTClass";
-import { PropertyType } from "../Base/PropertyType";
 import { BTVariable } from "./BTVariable";
+import { PropertyType } from "./PropertyType";
 
 @bt_variable()
-export default class BTComponent extends BTVariable<{ uuid: number }> {
+export default class BTComponent extends BTVariable<{ uuid: string }> {
     bName: string = "BTComponent";
     bType: PropertyType= PropertyType.Component;
 
-    GetDefaultValue(): { uuid: number } {
-        return { uuid: 0 }
+    GetDefaultValue(): { uuid: string } {
+        return { uuid: "" }
     }
-    SetValue(value: { uuid: number }): void {
+    SetValue(value: { uuid: string }): void {
         this.value = value
     }
-    GetValue(): { uuid: number } {
+    GetValue(): { uuid: string } {
         return this.value
     }
 }

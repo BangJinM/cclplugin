@@ -1,4 +1,4 @@
-import { PropertyType } from "../Base/PropertyType";
+import { PropertyType } from "./PropertyType";
 
 export abstract class BTVariable<T> {
     bName: string = "";

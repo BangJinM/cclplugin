@@ -30,12 +30,6 @@ export class BTGraph {
      * 导入后在替换成原本的 source
      */
     public cacheSourceMap: Map<string, string> = new Map();
-
-    _initedGraph = false;
-
-    reset() {
-        this._initedGraph = false;
-    }
 }
 
 export default new BTGraph();
