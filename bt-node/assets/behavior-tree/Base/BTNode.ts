@@ -1,3 +1,4 @@
+import { BTComponent } from './BTComponent';
 import { BTStatus } from './BTStatus';
 import { BTType } from "./BTType";
 

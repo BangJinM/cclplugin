@@ -1,6 +1,8 @@
 import * as cc from "cc";
-import { BTVariable } from "../Variable/BTVariable";
+import BTFloat from "../Variable/BTFloat";
+import BTFunction from "../Variable/BTFunction";
 import { PropertyType } from "../Variable/PropertyType";
+import { BTBlackBoard } from "./BTBlackBoard";
 import { btTreeClassMap, btTreePropertyMap, btTreeVariableMap } from "./BTClass";
 import { BTNode } from "./BTNode";
 const { ccclass, property } = cc._decorator;
@@ -9,7 +11,7 @@ export class BTComponent extends cc.Component {
     btName: string = ""
     btNodes: { [key: string]: BTNode } = {}
     btLines: { [key: string]: { source: string, target: string } } = {}
-    properties: { [key: string]: BTVariable<any> } = {}
+    blackBoard: BTBlackBoard = new BTBlackBoard()
     rootNode: BTNode = null
 
     @property(cc.JsonAsset)
@@ -35,8 +37,28 @@ export class BTComponent extends cc.Component {
             for (const key in obj.properties) {
                 let data = obj.properties[key]
                 if (data.type && PropertyType[data.type]) {
-                    this.properties[data.id] = Reflect.construct(btTreeVariableMap.get(data.type)!.create, [])
-                    this.properties[data.id].SetValue(data.value)
+                    let value = Reflect.construct(btTreeVariableMap.get(data.type)!.create, [])
+                    value.SetValue(data.value)
+
+                    this.blackBoard.Add(data.id, value)
+
+                    if (data.type == PropertyType.Function) {
+                        let scene: cc.Scene = cc.director.getScene()
+                        let comps = scene.getComponentsInChildren(data.value?.component)
+                        if (comps.length > 0) {
+                            let resultComp = null
+                            let uuid = data.value.uuid
+                            for (const comp of comps) {
+                                if (comp.node.uuid == uuid) {
+                                    resultComp = comp
+                                }
+                            }
+
+                            if (resultComp) {
+                                (value as BTFunction).SetComp(resultComp)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -52,15 +74,7 @@ export class BTComponent extends cc.Component {
 
                     if (btTreePropertyMap.get(classData.name)) {
                         for (const value of btTreePropertyMap.get(classData.name)!) {
-                            if (data.properties[value.name]) {
-                                let propertyId = data.properties[value.name]
-                                if (propertyId && this.properties[propertyId]) {
-                                    node[value.name] = this.properties[propertyId].value
-                                }
-                            }
-                            else {
-                                node[value.name] = Reflect.construct(btTreeVariableMap.get(data.type)!.create, [])
-                            }
+                            this.BindProperty(data.properties[value.name], value.type as PropertyType, node, value.name)
                         }
                     }
                 }
@@ -70,7 +84,6 @@ export class BTComponent extends cc.Component {
         }
         this.btLines = obj.lines
 
-
         for (const element in this.btLines) {
             let line = this.btLines[element]
             if (line && line.source && line.target && this.btNodes[line.source] && this.btNodes[line.target]) {
@@ -79,5 +92,46 @@ export class BTComponent extends cc.Component {
         }
 
         this.rootNode = this.btNodes[rootNodeId]
+    }
+
+    GetNum() {
+        let float = new BTFloat()
+        float.SetValue(10)
+        return float;
+    }
+
+    BindProperty(propertyId: string, propertyType: PropertyType, btNode: BTNode, propertyKey: string) {
+        if (!this.blackBoard.Get(propertyId)) {
+            console.error(`${btNode.constructor.name} 类中的${propertyId}字段暂未绑定属性`)
+            return
+        }
+
+        let descriptor = Object.getOwnPropertyDescriptor(btNode.constructor.prototype, propertyKey);
+        if (descriptor) {
+            const oldSet = descriptor.set;
+            Object.defineProperty(btNode, propertyKey, {
+                get: () => {
+                    switch (propertyType) {
+                        case PropertyType.Node: {
+                            let data = this.blackBoard.Get(propertyId)
+                            let scene: cc.Scene = cc.director.getScene()
+                            return scene.getChildByUuid(data.GetValue()?.uuid)
+                        } case PropertyType.Function: {
+                            let data = this.blackBoard.Get(propertyId) as BTFunction
+                            if (!data || !data.GetComp()) return
+                            return data.GetComp()[data.GetValue().methodName]?.call()
+                        }
+                        default: {
+                            return this.blackBoard.Get(propertyId)
+                        }
+                    }
+                },
+                set: oldSet,
+                enumerable: true,
+                configurable: true
+            });
+        }
+
+
     }
 }

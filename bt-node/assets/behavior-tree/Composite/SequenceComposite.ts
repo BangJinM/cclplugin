@@ -5,10 +5,6 @@ import { BTType } from "../Base/BTType";
 
 @bt_class(BTType.Composite)
 export class SequenceComposite extends BTComposite {
-    constructor() {
-        super()
-    }
-
     public Tick(dt: number): BTStatus {
         for (const child of this.mChildren) {
             let flag = child.Tick(dt)

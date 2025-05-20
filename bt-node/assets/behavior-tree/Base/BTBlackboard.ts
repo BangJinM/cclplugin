@@ -1,5 +1,7 @@
-export class Blackboard {
-    map: { [key: string]: any } = {}
+import { BTVariable } from "../Variable/BTVariable";
+
+export class BTBlackBoard {
+    map: { [key: string]: BTVariable<any> } = {}
 
     Add(key: string, value: any) {
         this.map[key] = value;

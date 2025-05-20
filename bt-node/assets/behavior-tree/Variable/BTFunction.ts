@@ -1,11 +1,14 @@
+import * as cc from "cc";
 import { bt_variable } from "../Base/BTClass";
-import { PropertyType } from "./PropertyType";
 import { BTVariable } from "./BTVariable";
+import { PropertyType } from "./PropertyType";
 
 @bt_variable()
 export default class BTFunction extends BTVariable<{ uuid: string, component: string, methodName: string }> {
     bName: string = "BTFunction";
-    bType: PropertyType= PropertyType.Function;
+    bType: PropertyType = PropertyType.Function;
+
+    comp: cc.Component = null
 
     GetDefaultValue(): { uuid: string, component: string, methodName: string } {
         return { uuid: "", component: "", methodName: "" }
@@ -15,5 +18,13 @@ export default class BTFunction extends BTVariable<{ uuid: string, component: st
     }
     GetValue(): { uuid: string, component: string, methodName: string } {
         return this.value
+    }
+
+    GetComp(): cc.Component {
+        return this.comp
+    }
+
+    SetComp(tmepData: cc.Component) {
+        this.comp = tmepData
     }
 }

@@ -31,7 +31,7 @@ export function bt_variable(): ClassDecorator {
  * @returns 
  */
 export function bt_property(type: PropertyType) {
-    return function (target, propertyKey) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         if (!btTreePropertyMap.has(target.constructor.name)) {
             btTreePropertyMap.set(target.constructor.name, [])
         }
@@ -41,7 +41,7 @@ export function bt_property(type: PropertyType) {
             type: type
         })
     };
-};
+}
 
 export function CollectNodeProperty(type: string) {
     let propertyMap = new Map()
