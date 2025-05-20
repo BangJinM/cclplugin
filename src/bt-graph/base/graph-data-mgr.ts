@@ -45,7 +45,7 @@ export class GraphDataMgr {
 
         let blockData = {
             name: "ROOT",
-            type: "SequenceCompositeNode",
+            type: "SequenceComposite",
             id: generateUUID(),
             root: true
         };
