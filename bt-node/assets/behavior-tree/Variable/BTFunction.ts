@@ -7,7 +7,7 @@ import { PropertyType } from "./PropertyType";
 export default class BTFunction extends BTVariable<{ uuid: string, component: string, methodName: string }> {
     bName: string = "BTFunction";
     bType: PropertyType = PropertyType.Function;
-
+    /** 运行时获取的组件 */
     comp: cc.Component = null
 
     GetDefaultValue(): { uuid: string, component: string, methodName: string } {
