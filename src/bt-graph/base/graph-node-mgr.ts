@@ -106,4 +106,20 @@ export class GraphNodeMgr {
         currentGraphData.nodes[key] = newData
         GraphDataMgr.Instance.setDirty(true);
     }
+
+    public upateLink(fromkey: string, toKey: string) {
+        const currentGraphData = GraphDataMgr.Instance.getCurrentGraphData();
+        for (const element in currentGraphData.lines) {
+            if (toKey == currentGraphData.lines[element].target) {
+                delete currentGraphData.lines[element]
+            }
+        }
+
+        currentGraphData.lines[generateUUID()] = {
+            source: fromkey,
+            target: toKey
+        }
+        GraphDataMgr.Instance.setDirty(true);
+        MessageMgr.Instance.send(MessageType.GraphNodeChange)
+    }
 }

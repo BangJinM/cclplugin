@@ -42,7 +42,6 @@ export default defineComponent({
         onMounted(() => {
             myDiagram = new go.Diagram(logicFlowRef.value,
                 {
-                    "undoManager.isEnabled": true,
                     layout: new go.TreeLayout({ angle: 90, layerSpacing: 35 }),
                 });
             myDiagram.nodeTemplate =
@@ -52,10 +51,14 @@ export default defineComponent({
                         mouseEnter: mouseEnter,
                         mouseLeave: mouseLeave,
                         selectionChanged: onSelectionChanged,
+                        fromSpot: go.Spot.Bottom,
+                        toSpot: go.Spot.Top,
+                        fromLinkable: true,
+                        toLinkable: true,
                     })
                     .add(
                         new go.Shape("Rectangle", { strokeWidth: 2, stroke: null, name: "SHAPE" }).bind("fill", "color"),
-                        new go.Panel("Table", { defaultAlignment: go.Spot.Left, margin: 4 }).add(
+                        new go.Panel("Table").add(
                             new go.TextBlock("Default Text",
                                 {
                                     margin: 10, font: "bold 18px Verdana", name: "TEXT", editable: false, row: 0
@@ -66,17 +69,19 @@ export default defineComponent({
                                     margin: 10, font: "bold 18px Verdana", name: "TEXT", editable: true, row: 1
                                 })
                                 .bind("text", "name")
-                        ),
+                        )
                     );
 
             // define a Link template that routes orthogonally, with no arrowhead
             myDiagram.linkTemplate =
                 new go.Link(
-                    { routing: go.Routing.Orthogonal, corner: 5 })
+                    {
+                        routing: go.Routing.Orthogonal,
+                        corner: 5,
+                    })
                     .add(
                         new go.Shape({ strokeWidth: 3, stroke: "#61f5f5" }),
                     );
-
             myDiagram.nodeTemplate.contextMenu = go.GraphObject.build('ContextMenu')
                 .add(
                     makeButton('Add', (e, obj) => {
@@ -98,8 +103,18 @@ export default defineComponent({
             myDiagram.grid.visible = true;
             myDiagram.grid.gridCellSize = new go.Size(50, 40);
             myDiagram.animationManager.isEnabled = false
-            myDiagram.toolManager.draggingTool.isEnabled = false
-            myDiagram.toolManager.linkingTool.isEnabled = false
+            myDiagram.toolManager.linkingTool.isValidLink = (fromnode: go.Node, fromport: go.GraphObject, tonode: go.Node, toport: go.GraphObject) => {
+                return fromnode.data["key"] != tonode.data["key"] && !tonode.data["root"]
+            }
+
+            myDiagram.addDiagramListener("LinkDrawn", function (e) {
+                const link = e.subject;
+                console.log("连线完成",
+                    "源:", link.fromNode.key,
+                    "目标:", link.toNode.key,
+                    "连接数据:", link.data);
+                GraphNodeMgr.Instance.upateLink(link.fromNode.key, link.toNode.key)
+            });
 
             myDiagram.toolManager.textEditingTool.isValidText = (textblock: go.TextBlock, oldstr: string, newstr: string) => {
                 if (newstr.length <= 0)
@@ -118,7 +133,6 @@ export default defineComponent({
                     GraphNodeMgr.Instance.updateNode(data.key, newData)
                 }
             }
-
 
             MessageMgr.Instance.register(MessageType.AssetLoaded, onAssetLoaded)
             MessageMgr.Instance.register(MessageType.GraphNodeChange, onGraphNodeChange)
